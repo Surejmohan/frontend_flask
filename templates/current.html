@@ -1,0 +1,78 @@
+{% extends 'base/base.html' %}
+
+{% block script %} <script defer src="{{ url_for('static',filename = 'js/current.js')}}"></script> {% endblock %}
+
+
+  
+
+
+{% block navbar %}
+      <nav id="nav-menu-container">
+        <ul class="nav-menu pull-right">
+         <span style="color: white;">Username </span><li class="menu-active"></li><a href="#"><b>Logout</b></a></li>
+        </ul>
+      </nav>
+{% endblock %}
+
+      {% block body %} 
+
+      <div class="container-fluid" style="margin-top: 100px;border-color:#2dc997; border-radius: 10px; border-style: solid; max-width: 90%; min-width: 300px;">
+      <form action="" method="POST">
+        
+          <div class="row">
+            
+                <label class="control-label"></label>
+                
+                      <div style="margin: 20px;"><b>Upload File</b></div>
+                    </div>
+                    <div class="box-body" id = "review" style="margin: 30px;">
+                
+                    <i class="glyphicon glyphicon-download-alt"></i>
+                    <p>Choose  Image files or drag it here(max Two Images).</p>
+                  </div>
+                  <div class="row">
+                  <div style="margin: 30px;">
+                  <input type="file" name="img_logo" id ="fileupload" class="dropzone" multiple>
+                  </div>
+                  
+              <div id="dvPreview"></div>
+            
+            </div>
+          <div class="row">
+            
+              <button type="submit" class="btn btn-primary pull-left"style="max-width: 200px; margin-left: 10px;background-color:#2dc997;">Upload</button>
+  
+              <button type="button" class="btn btn-danger pull-left" style="max-width: 200px;margin-left: 10px;" onclick="resetFile()"> Reset The Field
+            </button>
+            </div>
+          
+      
+      </form>
+    </div>
+  
+    
+    <div class="row container-fluid" style="margin-left: 4px; margin-bottom: 50px;">
+            
+      <button type="submit" id = "up1" class="btn btn-primary pull-left"style="max-width: 300px; margin: 10px;background-color:#2dc997;" onclick="video()"href="#video" >Upload Input Video</button>
+
+      <button type="button" id = "up2"  class="btn btn-primary pull-left" style="max-width: 300px; margin: 10px;background-color:#2dc997;" onclick="third()" href="#third">Upload Info About Video Source
+    </button>
+    </div>
+
+
+
+
+    
+    
+    
+    <!-- input video -->
+    <div id = "video">
+    </div>
+    <!---->
+    <!-- third party -->
+    <div id = "third">
+    </div>
+    <!---->
+    
+    {% endblock %}
+
