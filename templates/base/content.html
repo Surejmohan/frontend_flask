@@ -90,20 +90,21 @@ border-color:#2dc997; border-radius: 7%; max-width: 650px;">
  <center>
   
   <div class="container">
-    
+    <form action="" id ="signUpForm">
     <div class="col-xs-12 col-sm-6 col-md-9 ">
-    <input type="text" placeholder="Enter Username" name="uname" required>
+    <input type="text" placeholder="Enter Username" name="uname" id="username" pattern="([0-9a-zA-Z]*)" title="It contain letters and numbers only"  required>
+    
 
     
     <br>
-    <input type="password" placeholder="Enter Password" name="psw" required>
+    <input type="password" placeholder="Enter Password" id ="psw" name="psw" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters" required>
     
-    <div class="g-recaptcha" data-sitekey="6LeS0eEUAAAAAAPvV-ivUDw37ZWfgorEXqNYDMSj"></div>
+    <div class="g-recaptcha" data-theme="light" id ="grecaptcha" data-sitekey="6LeS0eEUAAAAAAPvV-ivUDw37ZWfgorEXqNYDMSj" style="transform:scale(0.77);-webkit-transform:scale(0.77);transform-origin:0 0;-webkit-transform-origin:0 0;" ></div>
     <br>
-    <button  type="submit" style="background-color:#2dc997;" >Login</button><br>
+    <button  type="submit" id="loginbutton" style="background-color:#2dc997;" >Login</button><br>
     <br>
   </div>
-
+</form>
   <div class="container" style="background-color:#f1f1f1;">
   
     <span class="psw">Forgot <a style="color:#2dc997;" href="#" >password?</a></span>
