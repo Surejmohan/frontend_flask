@@ -15,10 +15,28 @@ var htm = '';
 	signUpForm.submit();
   });
 */
+$("#captche").hide();
+function codevalidate(){
 
-loginbutton.addEventListener('click', function (event) {
-	signUpForm.submit();
-  });
+	var v = grecaptcha.getResponse()
+	console.log(v.length);
+	if (v.length == 0){
+
+		document.getElementById("captche").innerHTML = "Captcha code empty";
+		$("#captche").show();
+		return false;
+	}
+	else
+	{
+		$.post("mass.html");
+		$("#captche").hide();
+		signin.submit();
+	}
+	
+}
+
+
+
 
 
 
@@ -28,6 +46,7 @@ function User()
 
 htm = `
 <h2 class="well" style="min-width: 320px;margin-top:2%; text-align: center;font-weight: bold;"id ="register" >Registration Form</h2>
+<form action ="" method ="POST">
 <div class="col-lg-12 ">
 <div class=" col-xs-12 col-sm-6 col-md-9">
 
@@ -35,12 +54,12 @@ htm = `
 			<div class="row">
 			<div class="col-xs-12 col-sm-6 form-group">
 			<label><b>First Name &nbsp;<span style="color: red;">*</span></b></label>
-			<input type="text" placeholder="Enter First Name" class="form-control" value="" />
+			<input type="text" placeholder="Enter First Name" class="form-control" value="" pattern="([a-zA-Z]*)" title="It contains alphabets only"  required />
 			</div>
 
 			<div class="col-xs-12 col-sm-6 form-group">
 			<label><b>Last Name &nbsp;<span style="color: red;">*</span></b></label>
-			<input type="text" placeholder="Enter Last Name" class="form-control" value="" />
+			<input type="text" placeholder="Enter Last Name" class="form-control" value="" pattern="([a-zA-Z]*)" title="It contains alphabets only"  required />
 			</div>
 			</div>					
 
@@ -48,56 +67,56 @@ htm = `
 			<div class="row">
 			<div class="col-xs-12 col-sm-6 col-md-9 form-group">
 			<label><b>User Name &nbsp;<span style="color: red;">*</span></b></label>
-			<input type="text" placeholder="Enter User Name " class="form-control" value="" />
+			<input type="text" placeholder="Enter User Name " class="form-control" value="" pattern="([0-9a-zA-Z]*)" title="It contain letters and numbers only"  required/>
 			</div>
 			</div>
 			
 			<div class="row">
 			<div class="col-xs-12 col-sm-6 form-group">
 			<label><b>Password &nbsp;<span style="color: red;">*</span></b></label>
-			<input type="password" placeholder="Enter Password *" class="form-control">
+			<input type="password" placeholder="Enter Password *" class="form-control"  maxlength="12"  pattern="[0-9a-zA-Z].{8,}" title="It includes  numbers , uppercase,lowercase letter, and at least 8 or more characters required (Max length:12)" required >
 			</div>	
 			
 
 			
 			<div class="col-sm-6 form-group">
 			<label><b>Confirm password &nbsp;<span style="color: red;">*</span></b></label>
-			<input type="password" placeholder="Enter Confirm Password *" class="form-control" value=""  />
+			<input type="password" placeholder="Enter Confirm Password *" class="form-control" value=""  maxlength="12" pattern="[0-9a-zA-Z].{8,}" title="It includes  numbers , uppercase,lowercase letter, and at least 8 or more characters required (Max length:12)" required />
 			</div>	
 			</div>	
 	
 			<div class="row">					
 			<div class="col-sm-4 form-group col-xs-12 col-sm-6 ">
 			<label><b>Mobile Number &nbsp;<span style="color: red;">*</span></b></label>
-			<input type="tel" placeholder="Enter Mobile Number *" class="form-control" value="" pattern="[0-9]{10}">	</div>
+			<input type="tel" placeholder="Enter Mobile Number *" class="form-control" value=""  maxlength="10" pattern="[0-9]{10}" title="10 digit number" required />	</div>
 
 
 			<div class="form-group col-sm-4 col-xs-12 col-sm-6 ">
 			<label><b>Email Address &nbsp;<span style="color: red;">*</span></b></label>
-			<input type="email" placeholder="Enter Email Address *" class="form-control">
+			<input type="email" placeholder="Enter Email Address *" class="form-control" title="Valid email address" required />
 			</div>	
 			</div>
 
 			<div class = "row">
 			<div class="form-group col-xs-12 col-sm-6">
 			<label><b>Address &nbsp;<span style="color: red;">*</span></b></label>
-			<textarea placeholder="Enter Address Here.." rows="3" class="form-control"></textarea>
+			<textarea placeholder="Enter Address Here.." rows="3" class="form-control"  title="It contains Alphabets and Numbers only"  required/></textarea>
 			</div>	
 			
 			<div class="col-sm-4 form-group col-xs-12 col-sm-6 ">
 			<label><b>City &nbsp;<span style="color: red;">*</span></b></label>
-			<input type="text" placeholder="Enter City Name Here.." class="form-control">
+			<input type="text" placeholder="Enter City Name Here.." class="form-control" pattern="([a-zA-Z]*)" title="It contains Alphabets only"  required />
 			</div>	
 			</div>
 
 			<div class = "row">
 			<div class="col-sm-4 form-group col-xs-12 col-sm-6 ">
 			<label><b>State &nbsp;<span style="color: red;">*</span></b></label>
-			<input type="text" placeholder="Enter State Name Here.." class="form-control">
+			<input type="text" placeholder="Enter State Name Here.." class="form-control" pattern="([a-zA-Z]*)" title="It contains Alphabets only"  required />
 			</div>	
 			<div class="col-sm-4 form-group col-xs-12 col-sm-6 ">
 			<label><b>Zip &nbsp;<span style="color: red;">*</span></b></label>
-			<input type="text" placeholder="Enter Zip Code Here.." class="form-control">
+			<input type="text" placeholder="Enter Zip Code Here.." class="form-control" pattern="[0-9]{6}" title="It contains 6 digits only" maxlength="6" required  />
 			</div>
 			</div>		
 					
@@ -105,7 +124,7 @@ htm = `
 			<div class="form-group"><br>
 			<label class=" control-label" for="filebutton"><b>Upload Any proof &nbsp;<span style="color: red;">*</span></b></label>
 			<div class="col-xs-12 col-sm-6 col-md-9">
-			<input name="filebutton" class="input-file" id="filebutton" type="file">
+			<input name="filebutton" class="input-file" id="filebutton" type="file" required>
 			</div>
 			</div>
 			</div>
@@ -126,14 +145,14 @@ htm = `
 		<br>
 		<br>
 		</div> 
-		<input type="checkbox" class="form-check-input position-static" id="instruct" value="done">
+		<input type="checkbox" class="form-check-input position-static" id="userinstruct" value="done" required>
 		&nbsp;<label class="form-check-label"> I have a Read the Instructions</label> &nbsp;<span style="color: red;">*</span><br><br><br>
 		  
 		 <br><br>
 		 <span style="color: red;">* Required Fields</span><br><br>
 		
-						<button type="button" style=" background-color:#2dc997;max-width: 50%;" class="btn btn-lg btn-info">Submit</button>	<br>
-						
+						<button type="submit" id ="usersignup" style=" background-color:#2dc997;max-width: 50%;" class="btn btn-lg btn-info">Submit</button>	<br>
+						</form>
 						
   
 						`
@@ -160,50 +179,51 @@ function Authority()
 
 
 htm = `<h2 class="well" style="min-width: 320px;margin-top:2%; text-align: center;font-weight: bold;"id ="authority" >Registration Form</h2>
+<form action="" method = "POST">
 <div class="col-lg-12 ">
 <div class=" col-xs-12 col-sm-6 col-md-9">
 
 						<div class="row">
 						<div class="col-xs-12 col-sm-6 form-group">
 							<label><b>First Name &nbsp;<span style="color: red;">*</span></b></label>
-							<input type="text" placeholder="Enter First Name" class="form-control" value="" />
+							<input type="text" placeholder="Enter First Name" class="form-control" value="" pattern="([a-zA-Z]*)" title="It contains alphabets only"  required />
 						</div>
 						<div class="col-xs-12 col-sm-6 form-group">
 							<label><b>Last Name &nbsp;<span style="color: red;">*</span></b></label>
-							<input type="text" placeholder="Enter Last Name" class="form-control" value="" />
+							<input type="text" placeholder="Enter Last Name" class="form-control" value="" pattern="([a-zA-Z]*)" title="It contains alphabets only"  required />
 						</div>
 						</div>			
 						<div class="row">
 
 						<div class="col-xs-12 col-sm-6 col-md-9 form-group">
 						<label><b>User Name &nbsp;<span style="color: red;">*</span></b></label>
-						<input type="text" placeholder="Enter User Name " class="form-control" value="" />
+						<input type="text" placeholder="Enter User Name " class="form-control" value="" pattern="([0-9a-zA-Z]*)" title="It contain letters and numbers only"  required />
 						</div>
 						</div>
 			
 						<div class="row">
 						<div class="col-xs-12 col-sm-6 form-group">
 						<label><b>Password &nbsp;<span style="color: red;">*</span></b></label>
-						<input type="password" placeholder="Enter Password *" class="form-control">
+						<input type="password" placeholder="Enter Password *" class="form-control"  maxlength="12" pattern="[0-9a-zA-Z].{8,}" title="It includes  numbers , uppercase,lowercase letter, and at least 8 or more characters required (Max length:12)" required>
 						</div>	
 			
 
 			
 						<div class="col-sm-6 form-group">
 						<label><b>Confirm password &nbsp;<span style="color: red;">*</span></b></label>
-						<input type="password" placeholder="Enter Confirm Password *" class="form-control" value=""  />
+						<input type="password" placeholder="Enter Confirm Password *" class="form-control" value=""  maxlength="12" pattern="[0-9a-zA-Z].{8,}" title="It includes  numbers , uppercase,lowercase letter, and at least 8 or more characters required (Max length:12)" required />
 						</div>	
 						</div>	
 
 						<div class="row">					
 						<div class="col-sm-4 form-group col-xs-12 col-sm-6 ">
 						<label><b>Mobile Number &nbsp;<span style="color: red;">*</span></b></label>
-						<input type="tel" placeholder="Enter Mobile Number *" class="form-control" value="" pattern="[0-9]{10}">	</div>
+						<input type="tel" placeholder="Enter Mobile Number *" class="form-control" value=""  maxlength="10" pattern="[0-9]{10}" title="10 digit number" required >	</div>
 
 
 						<div class="form-group col-sm-4 col-xs-12 col-sm-6 ">
 						<label><b>Email Address &nbsp;<span style="color: red;">*</span></b></label>
-						<input type="email" placeholder="Enter Email Address *" class="form-control">
+						<input type="email" placeholder="Enter Email Address *" class="form-control" required>
 						</div>	
 						</div>
 
@@ -211,7 +231,7 @@ htm = `<h2 class="well" style="min-width: 320px;margin-top:2%; text-align: cente
 						<div class="form-group col-sm-4 col-xs-12 col-sm-6">
 						<label for="job">Job Title:</label>&nbsp;
 
-						<select id="job">
+						<select id="job" required>
 						  <option class="dropdown-item" value="">--select option--</option>
 						  <option class="dropdown-item" value="Police">Police Force</option>
 						  <option class="dropdown-item" value="RPF">RPF</option>
@@ -223,7 +243,7 @@ htm = `<h2 class="well" style="min-width: 320px;margin-top:2%; text-align: cente
 					<div class="form-group"><br>
 					<label class=" control-label" for="filebutton"><b><span style="color: red;">*</span>Upload ID card Image</b></label>
 					<div class="col-xs-12 col-sm-6 col-md-9">
-					<input name="filebutton" class="input-file" id="filebutton" type="file">
+					<input name="filebutton" class="input-file" id="filebutton" type="file" required>
 					</div>
 					</div>
 					</div>
@@ -244,14 +264,16 @@ htm = `<h2 class="well" style="min-width: 320px;margin-top:2%; text-align: cente
 <br>
 <br>
 </div> 
-<input type="checkbox" class="form-check-input position-static" id="instruct" value="done">
+<input type="checkbox" class="form-check-input position-static" id="instruct" value="done" required>
 &nbsp;<label class="form-check-label"> I have a Read the Instructions</label>&nbsp;<span style="color: red;">*</span><br><br><br>
 
 <br><br>
 <span style="color: red;">* Required Fields</span><br><br>
 
-			  <button type="button" style="background-color:#2dc997;max-width: 50%;" class="btn btn-lg btn-info">Submit</button>	<br>
-	 `
+			  <button type="submit" style="background-color:#2dc997;max-width: 50%;" class="btn btn-lg btn-info">Submit</button>	<br>
+	
+			  </form>
+			  `
 
 document.getElementById("authority").innerHTML= htm;
 

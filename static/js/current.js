@@ -72,16 +72,17 @@ function video()
 htm = `
 <div class="col-lg-12" style="margin-bottom: 10px;">
 <div class=" col-xs-12 col-sm-6 col-md-9">
+<form action="" method="POST">
 <div class="form-group" style = "margin-bottom: 10px;"><br>
-<div style="margin: 20px;"><b>Upload File</b></div>
+<div style="margin: 20px;"><b>Upload Video</b></div>
 					<div class="col-xs-12 col-sm-6 col-md-9">
-					<input name="filebutton" class="input-file" id="videobutton" type="file">
+					<input name="filebutton" class="input-file" id="videobutton" type="file" accept=".mp4,.avi,.3gp" required>
 					</div>
-          
+          <button type="submit" class="btn btn-primary pull-left" style="max-width: 200px;margin-left: 10px; background-color:#2dc997; margin-bottom: 10px;"> Upload Video</button>
           <button type="button" class="btn btn-danger pull-left" style="max-width: 200px;margin-left: 10px; margin-bottom: 10px;" onclick="resetvideo()"> Reset The Field
           </button><br><br><br>
           </div>
-</div>
+</div></form>
 </div>
 `
 document.getElementById("video").innerHTML= htm; 
@@ -137,10 +138,10 @@ htm = `
 
 <centre>
 <div class="col-md-4" id ="mass">
-<form>
+<form action="" method="POST" >
 <h4>Select Department</h4>
 <div class ="container-fluid">
-<select class="form-control"  id='firstList' name='firstList' onClick="getauth()">
+<select class="form-control"  id='firstList' name='firstList' onclick="getauth()" required>
 <option class="dropdown-item" value="0">--Select--</option>
 						  <option class="dropdown-item" value="1">Railways</option>
 						  <option class="dropdown-item" value="2">Police</option>
@@ -148,12 +149,12 @@ htm = `
 </select>
  
 <h4>Locate here</h4>
-<select class="form-control"  id='secondList' name='secondList' >
+<select class="form-control"  id='secondList' name='secondList' required >
 </select>
 </div><br><br>
 
 <div class ="row col-md-4 col-xs-12 col-sm-6 col-md-9"style="margin-left:5px;">
-<button type="button" class="btn btn-primary pull-left" style="max-width: 200px;margin-left: 10px; background-color:#2dc997; margin-bottom: 10px;"> Request for Video</button>
+<button type="submit" class="btn btn-primary pull-left" style="max-width: 200px;margin-left: 10px; background-color:#2dc997; margin-bottom: 10px;"> Request for Video</button>
 <button type="button" class="btn btn-danger pull-left" style="max-width: 200px;margin-left: 10px; margin-bottom: 10px;" onclick="resetthird()"> Reset The Field
           </button>
         </div>
