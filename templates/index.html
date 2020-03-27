@@ -1,6 +1,12 @@
 {% extends 'base/base.html' %}
 
-{% block script %} <script defer src="{{ url_for('static',filename = 'js/index.js')}}"></script> {% endblock %}
+{% block script %} 
+<script defer src="{{ url_for('static',filename = 'js/index.js')}}"></script>
+<script defer src="{{ url_for('static',filename = 'js/jquery.js')}}"></script>
+<script defer src="{{ url_for('static',filename = 'js/state.js')}}"></script>
+
+
+{% endblock %}
 
 {% block navbar %}
       <nav id="nav-menu-container">

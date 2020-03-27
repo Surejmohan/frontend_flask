@@ -95,6 +95,7 @@ htm = `
 			<label><b>Email Address &nbsp;<span style="color: red;">*</span></b></label>
 			<input type="email" placeholder="Enter Email Address *" class="form-control" title="Valid email address" required />
 			</div>	
+
 			</div>
 
 			<div class = "row">
@@ -103,17 +104,56 @@ htm = `
 			<textarea placeholder="Enter Address Here.." rows="3" class="form-control"  title="It contains Alphabets and Numbers only"  required/></textarea>
 			</div>	
 			
-			<div class="col-sm-4 form-group col-xs-12 col-sm-6 ">
-			<label><b>City &nbsp;<span style="color: red;">*</span></b></label>
-			<input type="text" placeholder="Enter City Name Here.." class="form-control" pattern="([a-zA-Z]*)" title="It contains Alphabets only"  required />
+			<div class="col-sm-4 form-group col-xs-12 col-sm-6">
+			<label><b>State &nbsp;<span style="color: red;">*</span></b></label>
+			<select id="list" onclick="selct_district(this.value)" class="form-control" required >
+			<option value ="">--Select State--</option>
+			<option value ="Andhra Pradesh">Andhra Pradesh</option>
+			<option value ="Arunachal Pradesh">Arunachal Pradesh</option>
+			<option value ="Assam">Assam</option>
+			<option value ="Bihar">Bihar</option>
+			<option value ="Chhattisgarh">Chhattisgarh</option>
+			<option value ="Dadra and Nagar Haveli">Dadra and Nagar Haveli</option>
+			<option value ="Daman and Diu">Daman and Diu</option>
+			<option value ="Delhi">Delhi</option>
+			<option value ="Goa">Goa</option>
+			<option value ="Gujarat">Gujarat</option>
+			<option value ="Haryana">Haryana</option>
+			<option value ="Himachal Pradesh">Himachal Pradesh</option>
+			<option value ="Jammu and Kashmir">Jammu and Kashmir</option>
+			<option value ="Jharkhand">Jharkhand</option>
+			<option value ="Karnataka">Karnataka</option>
+			<option value ="Kerala">Kerala</option>
+			<option value ="Madhya Pradesh">Madhya Pradesh</option>
+			<option value ="Maharashtra">Maharashtra</option>
+			<option value ="Manipur">Manipur</option>
+			<option value ="Meghalaya">Meghalaya</option>
+			<option value ="Mizoram">Mizoram</option>
+			<option value ="Nagaland">Nagaland</option>
+			<option value ="Orissa">Orissa</option>
+			<option value ="Puducherry">Puducherry</option>
+			<option value ="Punjab">Punjab</option>
+			<option value ="Rajasthan">Rajasthan</option>
+			<option value ="Sikkim">Sikkim</option>
+			<option value ="Tamil Nadu">Tamil Nadu</option>
+			<option value ="Telangana">Telangana</option>
+			<option value ="Tripura">Tripura</option>
+			<option value ="Uttar Pradesh">Uttar Pradesh</option>
+			<option value ="Uttarakhand">Uttarakhand</option>
+			<option value ="West Bengal">West Bengal</option>
+			</select>
 			</div>	
 			</div>
 
 			<div class = "row">
 			<div class="col-sm-4 form-group col-xs-12 col-sm-6 ">
-			<label><b>State &nbsp;<span style="color: red;">*</span></b></label>
-			<input type="text" placeholder="Enter State Name Here.." class="form-control" pattern="([a-zA-Z]*)" title="It contains Alphabets only"  required />
+			<label><b>City &nbsp;<span style="color: red;">*</span></b></label>
+			<select id='secondlist' class="form-control" required >
+			<option value="">--Select City--</option>
+			</select>
 			</div>	
+
+
 			<div class="col-sm-4 form-group col-xs-12 col-sm-6 ">
 			<label><b>Zip &nbsp;<span style="color: red;">*</span></b></label>
 			<input type="text" placeholder="Enter Zip Code Here.." class="form-control" pattern="[0-9]{6}" title="It contains 6 digits only" maxlength="6" required  />
@@ -307,6 +347,5 @@ $("#but4").click(function () {
 	
 
 });
-
 
 
