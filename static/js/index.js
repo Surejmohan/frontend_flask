@@ -34,6 +34,15 @@ function codevalidate(){
 	}
 	
 }
+var check = function() {
+	if (document.getElementById('password').value ==
+	  document.getElementById('confpassword').value) {
+		  alert("match")
+	 
+	} else {
+	  alert("not match")
+	}
+  }
 
 
 
@@ -46,7 +55,7 @@ function User()
 
 htm = `
 <h2 class="well" style="min-width: 320px;margin-top:2%; text-align: center;font-weight: bold;"id ="register" >Registration Form</h2>
-<form action ="/register" method ="POST">
+<form action ="/register" method ="POST" enctype="multipart/form-data">
 <div class="col-lg-12 ">
 <div class=" col-xs-12 col-sm-6 col-md-9">
 
@@ -74,14 +83,14 @@ htm = `
 			<div class="row">
 			<div class="col-xs-12 col-sm-6 form-group">
 			<label><b>Password &nbsp;<span style="color: red;">*</span></b></label>
-			<input type="password" name="password" placeholder="Enter Password *" class="form-control"  maxlength="12"  pattern="[0-9a-zA-Z].{8,}" title="It includes  numbers , uppercase,lowercase letter, and at least 8 or more characters required (Max length:12)" required >
+			<input type="password" id = "password" name="password" placeholder="Enter Password *" class="form-control"  maxlength="12"  pattern="[0-9a-zA-Z].{8,}" title="It includes  numbers , uppercase,lowercase letter, and at least 8 or more characters required (Max length:12)" required >
 			</div>	
 			
 
 			
 			<div class="col-sm-6 form-group">
 			<label><b>Confirm password &nbsp;<span style="color: red;">*</span></b></label>
-			<input type="password" name="confpassword" placeholder="Enter Confirm Password *" class="form-control" value=""  maxlength="12" pattern="[0-9a-zA-Z].{8,}" title="It includes  numbers , uppercase,lowercase letter, and at least 8 or more characters required (Max length:12)" required />
+			<input type="password" id = "confpassword" name="confpassword" placeholder="Enter Confirm Password *" class="form-control" value=""  maxlength="12" pattern="[0-9a-zA-Z].{8,}" title="It includes  numbers , uppercase,lowercase letter, and at least 8 or more characters required (Max length:12)" onkeyup='check();' required />
 			</div>	
 			</div>	
 	
@@ -164,7 +173,7 @@ htm = `
 			<div class="form-group"><br>
 			<label class=" control-label" for="filebutton"><b>Upload Any proof &nbsp;<span style="color: red;">*</span></b></label>
 			<div class="col-xs-12 col-sm-6 col-md-9">
-			<input name="idproof" class="input-file" id="filebutton" type="file" required>
+			<input name="idproof" class="input-file" id="filebutton" type="file" accept=".jpg,.jpeg,.pdf,.png" required>
 			</div>
 			</div>
 			</div>

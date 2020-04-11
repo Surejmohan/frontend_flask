@@ -1,13 +1,29 @@
 from flask import Flask,render_template,flash, redirect,url_for,session,logging,request,Response
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.dialects.oracle import BLOB,DATE
-import sqlite3 as sql
+import os
+from werkzeug.utils import secure_filename
+
+
+
+
+IDPROOF_FOLDER = './ID_Proof'
+ALLOWEDID_EXTENSIONS = {'pdf', 'png', 'jpg', 'jpeg'}
 
 
 app = Flask(__name__)
+app.config['IDPROOF_FOLDER'] = IDPROOF_FOLDER
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///main.db'
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config['SECRET_KEY'] = 'secret'
+
+
+
+def allowed_file3(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWEDID_EXTENSIONS
+
+
+
 
 db = SQLAlchemy(app)
 
@@ -22,6 +38,7 @@ class User(db.Model):
         self.username=username
         self.password=password
         self.type=type
+    
 class Admin(db.Model):
     __tablename__ = 'Admin'
     id = db.Column(db.Integer, primary_key=True,autoincrement=True)
@@ -64,13 +81,13 @@ class Authority(db.Model):
 class Ordinary(db.Model):
     __tablename__ = 'Ordinary'
     id = db.Column(db.Integer, primary_key=True,autoincrement=True)
-    fname = db.Column(db.String(20))
-    lname = db.Column(db.String(20))
+    fname = db.Column(db.String(30))
+    lname = db.Column(db.String(30))
     phone = db.Column(db.Integer)
-    mail = db.Column(db.String(20))
-    state = db.Column(db.String(20))
-    city = db.Column(db.String(20))
-    proof=db.Column(db.BLOB)
+    mail = db.Column(db.String(30))
+    state = db.Column(db.String(30))
+    city = db.Column(db.String(30))
+    proof=db.Column(db.String(40))
     address=db.Column(db.String(50))
     zip = db.Column(db.Integer)
     usr_name = db.Column(db.String, db.ForeignKey('User.username'),nullable=False)
@@ -119,6 +136,8 @@ class Other(db.Model):
         self.live_recording_no=live_recording_no
         self.usr_name=usr_name
 
+    
+
 
 
 class Third(db.Model):
@@ -142,7 +161,7 @@ class Third(db.Model):
 
 
 
-@app.route('/register', methods=['POST'])
+@app.route('/register', methods=['GET','POST'])
 def Register():
      if request.method == 'POST':
          fname = request.form['firstname']
@@ -156,22 +175,27 @@ def Register():
          state = request.form.get('state')
          city = request.form.get('city')
          zip = request.form['zipcode']
-         proof = request.form['idproof']
-         print(fname)
-         print(username)
-         print(city)
-         print(address)
-         print(city)
+         file1 = request.files['idproof']
+         proof = file1.filename
          if(password == confpassword):
             reg = User(username = username,password = password,type = 'Ordinary')
             db.session.add(reg)
 
             ord = Ordinary(fname = fname, lname = lname, phone = phone, mail = mail, state = state,
-            city = city, proof = proof, address = address, zip = zip, usr_name = username)
+            city = city,proof = proof, address = address, zip = zip, usr_name = username)
             db.session.add(ord)
             
             db.session.commit()
-            return render_template('index.html')
+            
+            if file1 and allowed_file3(file1.filename):
+                filename = secure_filename(file1.filename)
+                file1.save(os.path.join(app.config['IDPROOF_FOLDER'], filename))
+                return render_template('index.html')
+            
+
+
+            
+            
 
 
 
