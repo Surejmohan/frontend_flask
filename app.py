@@ -2,19 +2,34 @@ from flask import Flask,render_template,flash, redirect,url_for,session,logging,
 from flask_sqlalchemy import SQLAlchemy
 import os
 from werkzeug.utils import secure_filename
-
+from flask_wtf import FlaskForm 
+from flask_mail import Mail, Message
+from itsdangerous import URLSafeTimedSerializer, SignatureExpired
 
 
 
 IDPROOF_FOLDER = './ID_Proof'
 ALLOWEDID_EXTENSIONS = {'pdf', 'png', 'jpg', 'jpeg'}
 
+app =Flask(__name__)
+mail=Mail(app)
+s = URLSafeTimedSerializer('secret')
 
 app = Flask(__name__)
 app.config['IDPROOF_FOLDER'] = IDPROOF_FOLDER
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///main.db'
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config['SECRET_KEY'] = 'secret'
+
+
+
+app.config['MAIL_SERVER']='smtp.gmail.com'
+app.config['MAIL_PORT'] = 465
+app.config['MAIL_USERNAME'] = 'pinpoint.four.2020@gmail.com'
+app.config['MAIL_PASSWORD'] = 'Google2020'
+app.config['MAIL_USE_TLS'] = False
+app.config['MAIL_USE_SSL'] = True
+mail = Mail(app)
 
 
 
@@ -65,18 +80,20 @@ class Authority(db.Model):
     phone = db.Column(db.Integer)
     mail = db.Column(db.String(50))
     job = db.Column(db.String(50))
-    proof=db.Column(db.BLOB)
+    proof=db.Column(db.String(40))
+    confirm=db.Column(db.Boolean,unique=False, default=False)
     usr_name = db.Column(db.String, db.ForeignKey('User.username'),nullable=False)
     
 
-    def __init__(self,usr_name,fname,lname,phone,mail,job,proof):
+    def __init__(self,usr_name,fname,lname,phone,mail,job,proof,confirm):
         self.usr_name=usr_name
         self.fname=fname
         self.lname=lname
         self.phone=phone
         self.mail=mail
         self.job=job
-        self.proof=proof    
+        self.proof=proof 
+        self.confirm=confirm
 
 class Ordinary(db.Model):
     __tablename__ = 'Ordinary'
@@ -90,10 +107,11 @@ class Ordinary(db.Model):
     proof=db.Column(db.String(40))
     address=db.Column(db.String(50))
     zip = db.Column(db.Integer)
+    confirm=db.Column(db.Boolean,unique=False, default=False)
     usr_name = db.Column(db.String, db.ForeignKey('User.username'),nullable=False)
     
 
-    def __init__(self,usr_name,fname,lname,phone,mail,state,city,address,zip,proof):
+    def __init__(self,usr_name,fname,lname,phone,mail,state,city,address,zip,proof,confirm):
         self.usr_name=usr_name
         self.fname=fname
         self.lname=lname
@@ -104,6 +122,7 @@ class Ordinary(db.Model):
         self.address=address
         self.city=city
         self.zip=zip
+        self.confirm=confirm
 
 
 class Other(db.Model):
@@ -115,7 +134,7 @@ class Other(db.Model):
     no_of_video_request = db.Column(db.Integer)
     third_party_issue_id = db.Column(db.Integer)
     third_party_pending_order = db.Column(db.String(10))
-    Third_party_response = db.Column(db.String(20))  #video not available or available
+    third_party_response = db.Column(db.String(20))  #video not available or available
     date= db.Column(db.String(20))
     start_time = db.Column(db.String(20))
     end_time = db.Column(db.String(20))
@@ -123,18 +142,19 @@ class Other(db.Model):
     usr_name = db.Column(db.String, db.ForeignKey('User.username'),nullable=False)
     
 
-    def __init__(self,admin_approval,admin_id,no_of_video_upload,no_of_video_request,third_party_issue_id,third_party_pending_order,Third_party_response,date,start_time,end_time,live_recording_no,usr_name):
+    def __init__(self,admin_approval,admin_id,no_of_video_upload,no_of_video_request,third_party_issue_id,third_party_pending_order,third_party_response,date,start_time,end_time,live_recording_no,usr_name):
         self.admin_approval=admin_approval
         self.admin_id=admin_id
         self.no_of_video_request=no_of_video_upload
         self.third_party_issue_id=third_party_issue_id
         self.third_party_pending_order=third_party_pending_order
-        self.Third_party_response=Third_party_response
+        self.third_party_response=third_party_response
         self.date=date    
         self.start_time=start_time
         self.end_time=end_time
         self.live_recording_no=live_recording_no
         self.usr_name=usr_name
+
 
     
 
@@ -161,6 +181,13 @@ class Third(db.Model):
 
 
 
+
+
+
+@app.route('/fgfg')
+def login1():
+      return render_template('login1.html')
+
 @app.route('/register', methods=['GET','POST'])
 def Register():
      if request.method == 'POST':
@@ -170,30 +197,100 @@ def Register():
          password = request.form['password']
          confpassword = request.form['confpassword']
          phone = request.form['mobile']
-         mail = request.form['mail']
+         email = request.form['mail']
          address = request.form['address']
          state = request.form.get('state')
          city = request.form.get('city')
          zip = request.form['zipcode']
          file1 = request.files['idproof']
          proof = file1.filename
-         if(password == confpassword):
-            reg = User(username = username,password = password,type = 'Ordinary')
+         exists = User.query.filter_by(username=username).first()
+         if not exists:
+            if(password == confpassword):
+                reg = User(username = username,password = password,type = 'Ordinary')
+                db.session.add(reg)
+
+                ord = Ordinary(fname = fname, lname = lname, phone = phone, mail = email, state = state,
+                city = city,proof = proof, address = address, zip = zip, usr_name = username,confirm=0)
+                db.session.add(ord)
+                
+                db.session.commit()
+                #confirmation mail
+                token = s.dumps(email, salt='email-confirm')
+
+                msg = Message('Confirm PINPOINT Account', sender = 'pinpoint.four.2020@gmail.com', recipients = [email])
+                link = url_for('confirm_email', token=token, _external=True)
+                msg.html = render_template('email.html',link=link)
+                mail.send(msg)
+
+                
+                if file1 and allowed_file3(file1.filename):
+                    filename = secure_filename(file1.filename)
+                    filename = username +'_' + filename 
+                    file1.save(os.path.join(app.config['IDPROOF_FOLDER'], filename))
+                    return render_template('index.html')
+         flash('Username already taken,try somethig else','error')
+
+@app.route('/confirm_email/<token>')
+def confirm_email(token):
+    try:
+        email = s.loads(token, salt='email-confirm', max_age=172800)
+    except SignatureExpired:
+        return '<h1>The link is expired!</h1>'
+    Ord = Ordinary.query.filter_by(mail=email).first()
+    Ord.confirm = 1
+    db.session.add(Ord)
+    db.session.commit()
+    return '<h1>Your email is verifed!</h1>'
+
+@app.route('/reg_official', methods=['GET','POST'])
+def Register2():
+    if request.method == 'POST':
+        fname = request.form['fname']
+        lname = request.form['lname']
+        username = request.form['uname']
+        password = request.form['password']
+        confpassword = request.form['confpassword']
+        phone = request.form['mobile']
+        email = request.form['email']
+        job = request.form['job']
+        file1 = request.files['jobproof']
+        proof = file1.filename
+        if(password == confpassword):
+            
+            reg = User(username = username,password = password,type = 'Authority')
             db.session.add(reg)
 
-            ord = Ordinary(fname = fname, lname = lname, phone = phone, mail = mail, state = state,
-            city = city,proof = proof, address = address, zip = zip, usr_name = username)
-            db.session.add(ord)
+            Auth = Authority(fname = fname, lname = lname, phone = phone, mail = email, proof = proof, job=job , usr_name = username,confirm=0)
+            db.session.add(Auth)
             
             db.session.commit()
+            #confirmation mail
+            token = s.dumps(email, salt='email-confirm')
+            msg = Message('Confirm PINPOINT Account', sender = 'pinpoint.four.2020@gmail.com', recipients = [email])
+            link = url_for('confirm_email', token=token, _external=True)
+            msg.html = render_template('email.html',link=link)
+            mail.send(msg)
             
             if file1 and allowed_file3(file1.filename):
                 filename = secure_filename(file1.filename)
+                filename = username +'_' + filename 
                 file1.save(os.path.join(app.config['IDPROOF_FOLDER'], filename))
                 return render_template('index.html')
+
+
             
-
-
+@app.route("/login",methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        uname = request.form['uname']
+        passw = request.form['psw']
+        
+        login = User.query.filter_by(username=uname, password=passw).first()
+        if login is not None:
+            return redirect(url_for("index"))
+    return 'done'
+      
             
             
 
