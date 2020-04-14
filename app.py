@@ -181,13 +181,6 @@ class Third(db.Model):
 
 
 
-
-
-
-@app.route('/fgfg')
-def login1():
-      return render_template('login1.html')
-
 @app.route('/register', methods=['GET','POST'])
 def Register():
      if request.method == 'POST':
@@ -228,8 +221,19 @@ def Register():
                     filename = secure_filename(file1.filename)
                     filename = username +'_' + filename 
                     file1.save(os.path.join(app.config['IDPROOF_FOLDER'], filename))
-                    return render_template('index.html')
+                    return '<html><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"><center><div class="card text-white bg-info" style="max-width: 80em;"><div class="card-header"><h1>Please Confirm Your Email Address</h1></div><div class="card-body"><br><p class="card-text">We have sent an email with a confirmation link to your email address. In order to complete the sign-up process, please click the confirmation link.<br><br>If you do not receive a confirmation email, please check your spam folder. Also, please verify that you entered a valid email address in our sign-up form.</p><br><br></div> </div><br><br><div class="card text-white bg-info" style="max-width: 80em;"><div class="card-header"><br><h4>Your Documents are sent to admin for Verification.After verification your account will be activated.<BR> Please wait for the account activation mail</h4></p><br><br></div></html>'
+            else:
+                flash('Password and Confirm password not matched','error')
+                return render_template('index.html',scroll='re')
+
+
+     else:
          flash('Username already taken,try somethig else','error')
+         return render_template('index.html',scroll='re')
+             
+
+    
+         
 
 @app.route('/confirm_email/<token>')
 def confirm_email(token):
@@ -256,27 +260,38 @@ def Register2():
         job = request.form['job']
         file1 = request.files['jobproof']
         proof = file1.filename
-        if(password == confpassword):
-            
-            reg = User(username = username,password = password,type = 'Authority')
-            db.session.add(reg)
+        exists = User.query.filter_by(username=username).first()
+        if not exists:
+            if(password == confpassword):
+                
+                reg = User(username = username,password = password,type = 'Authority')
+                db.session.add(reg)
 
-            Auth = Authority(fname = fname, lname = lname, phone = phone, mail = email, proof = proof, job=job , usr_name = username,confirm=0)
-            db.session.add(Auth)
+                Auth = Authority(fname = fname, lname = lname, phone = phone, mail = email, proof = proof, job=job , usr_name = username,confirm=0)
+                db.session.add(Auth)
+                
+                db.session.commit()
+                #confirmation mail
+                token = s.dumps(email, salt='email-confirm')
+                msg = Message('Confirm PINPOINT Account', sender = 'pinpoint.four.2020@gmail.com', recipients = [email])
+                link = url_for('confirm_email', token=token, _external=True)
+                msg.html = render_template('email.html',link=link)
+                mail.send(msg)
+                
+                if file1 and allowed_file3(file1.filename):
+                    filename = secure_filename(file1.filename)
+                    filename = username +'_' + filename 
+                    file1.save(os.path.join(app.config['IDPROOF_FOLDER'], filename))
+                    return '<html><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"><center><div class="card text-white bg-info" style="max-width: 80em;"><div class="card-header"><h1>Please Confirm Your Email Address</h1></div><div class="card-body"><br><p class="card-text">We have sent an email with a confirmation link to your email address. In order to complete the sign-up process, please click the confirmation link.<br><br>If you do not receive a confirmation email, please check your spam folder. Also, please verify that you entered a valid email address in our sign-up form.</p><br><br></div> </div><br><br><div class="card text-white bg-info" style="max-width: 80em;"><div class="card-header"><br><h4>Your Documents are sent to admin for Verification.After verification your account will be activated.<BR> Please wait for the account activation mail</h4></p><br><br></div></html>'
+            else:
+                flash('Password and Confirm password not matched','error')
+                return render_template('index.html',scroll='re')
+
+        else:
             
-            db.session.commit()
-            #confirmation mail
-            token = s.dumps(email, salt='email-confirm')
-            msg = Message('Confirm PINPOINT Account', sender = 'pinpoint.four.2020@gmail.com', recipients = [email])
-            link = url_for('confirm_email', token=token, _external=True)
-            msg.html = render_template('email.html',link=link)
-            mail.send(msg)
-            
-            if file1 and allowed_file3(file1.filename):
-                filename = secure_filename(file1.filename)
-                filename = username +'_' + filename 
-                file1.save(os.path.join(app.config['IDPROOF_FOLDER'], filename))
-                return render_template('index.html')
+            flash('Username already taken,try somethig else','error')
+            return render_template('index.html',scroll='re')
+        
 
 
             
@@ -288,8 +303,9 @@ def login():
         
         login = User.query.filter_by(username=uname, password=passw).first()
         if login is not None:
-            return redirect(url_for("index"))
-    return 'done'
+            #return redirect(url_for("index"))
+            return 'done'
+
       
             
             
@@ -302,6 +318,7 @@ def login():
 
 @app.route('/')
 def index():
+    #return '<html><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"><center><div class="card text-white bg-info" style="max-width: 80em;"><div class="card-header"><h1>Please Confirm Your Email Address</h1></div><div class="card-body"><br><p class="card-text">We have sent an email with a confirmation link to your email address. In order to complete the sign-up process, please click the confirmation link.<br><br>If you do not receive a confirmation email, please check your spam folder. Also, please verify that you entered a valid email address in our sign-up form.</p><br><br></div> </div><br><br><div class="card text-white bg-info" style="max-width: 80em;"><div class="card-header"><br><h4>Your Documents are sent to admin for Verification.After verification your account will be activated.<BR> Please wait for the account activation mail</h4></p><br><br></div></html>'
     return render_template('index.html')
 
 

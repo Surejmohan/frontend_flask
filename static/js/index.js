@@ -47,6 +47,11 @@ var check = function() {
 	}
   }
 
+function showfield(name){
+    if(name=='Other')document.getElementById('div1').style.display="block";
+    else document.getElementById('div1').style.display="none";
+                    }
+                   
 
 
 
@@ -292,10 +297,19 @@ htm = `<h2 class="well" style="min-width: 320px;margin-top:2%; text-align: cente
 						  <option class="dropdown-item" value="">--select option--</option>
 						  <option class="dropdown-item" value="Police">Police Force</option>
 						  <option class="dropdown-item" value="RPF">RPF</option>
-						  <option class="dropdown-item" value="Others">Others</option>
+						  <option class="dropdown-item" value="Other">Others</option>
 						
 						</select>
 						</div>
+
+
+						<br>  <div class ="container-fluid" id="div1" style="display:none;">
+					  
+						 <input type="text" class="form-control" placeholder='input department' id='secondList' name='secondList' style="background-color:cadetblue;" required>
+						 <br>
+						 </div>
+
+						
 				
 					<div class="form-group"><br>
 					<label class=" control-label" for="filebutton"><b><span style="color: red;">*</span>Upload ID card Image</b></label>
