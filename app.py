@@ -258,8 +258,11 @@ def Register2():
         phone = request.form['mobile']
         email = request.form['email']
         job = request.form['job']
+        department = request.form['department']
         file1 = request.files['jobproof']
         proof = file1.filename
+        if job == 'Other':
+            job = department
         exists = User.query.filter_by(username=username).first()
         if not exists:
             if(password == confpassword):

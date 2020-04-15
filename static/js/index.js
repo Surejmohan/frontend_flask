@@ -28,7 +28,7 @@ function codevalidate(){
 	}
 	else
 	{
-		$.post("mass.html");
+		$.post("/login");
 		$("#captche").hide();
 		signin.submit();
 	}
@@ -47,11 +47,18 @@ var check = function() {
 	}
   }
 
-function showfield(name){
-    if(name=='Other')document.getElementById('div1').style.display="block";
-    else document.getElementById('div1').style.display="none";
-                    }
-                   
+function showfield(name)
+{
+    if(name=='Other'){
+		document.getElementById('dep').style.display="block";
+		document.getElementById("dep").required = true;
+	}
+    else{ 
+		document.getElementById('dep').style.display="none";
+		document.getElementById("dep").required = false;
+	}
+}
+					
 
 
 
@@ -293,20 +300,20 @@ htm = `<h2 class="well" style="min-width: 320px;margin-top:2%; text-align: cente
 						<div class="form-group col-sm-4 col-xs-12 col-sm-6">
 						<label for="job">Job Title:</label>&nbsp;
 
-						<select id="job" name="job" required>
+						<select id="job" name="job" onclick="showfield(this.value)" required>
 						  <option class="dropdown-item" value="">--select option--</option>
 						  <option class="dropdown-item" value="Police">Police Force</option>
 						  <option class="dropdown-item" value="RPF">RPF</option>
-						  <option class="dropdown-item" value="Other">Others</option>
+						  <option class="dropdown-item" value="Other">Other</option>
 						
 						</select>
 						</div>
 
 
-						<br>  <div class ="container-fluid" id="div1" style="display:none;">
+						 <div class="form-group col-sm-4 col-xs-12 col-sm-6 ">
 					  
-						 <input type="text" class="form-control" placeholder='input department' id='secondList' name='secondList' style="background-color:cadetblue;" required>
-						 <br>
+						 <input style="display:none;" type="text" class="form-control" placeholder='input department' id='dep' name='department'>
+					
 						 </div>
 
 						
