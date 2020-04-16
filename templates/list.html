@@ -1,0 +1,30 @@
+{% extends 'layout.html' %
+
+{% block body %}
+  <h1>List of Users</h1>
+  <ul class="list-group">
+    {% for user in users %}
+      <li class="list-group-item"><a href="Users/{{Admin.id}}">{{Admin.name}}</a>
+        <button class="btn-success">EDIT</button>  <button class="btn-danger">DELETE</button>
+      </li>
+
+      <li class="list-group-item d-flex justify-content-between"><p class="p-0 m-0 flex-grow-1">First item</p> 
+        <button class="btn-success">EDIT</button>  <button class="btn-danger">DELETE</button>
+     </li>
+    {% endfor %}
+  </ul>
+{% endblock %}
+
+
+
+
+if exists > 0:
+return render_template('remove.html', normal=exists)
+if users > 0:
+return render_template('remove.html', users=users)
+elif exists > 0:
+return render_template('remove.html', normal=exists)
+else:
+msg = 'No Users found Found'
+return render_template('list.html', msg=msg)
+# Close connection

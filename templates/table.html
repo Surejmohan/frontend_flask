@@ -1,0 +1,19 @@
+<doctype html>
+    <title>New Album - Flask Music Database</title>
+    <h2>New Album</h2>
+    
+
+ 
+   <form method=post>
+    <dl>
+        {{ render_field(form.uname) }}
+        {{ render_field(form.title) }}
+        {{ render_field(form.release_date) }}
+        {{ render_field(form.publisher) }}
+        {{ render_field(form.media_type) }}
+    </dl>
+    <p><input type=submit value=Submit>
+</form>
+                   
+              
+    </html>
