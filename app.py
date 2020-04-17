@@ -237,6 +237,9 @@ def Register():
                 ord = Ordinary(fname = fname, lname = lname, phone = phone, mail = email, state = state,
                 city = city,proof = proof, address = address, zip = zip, usr_name = username,confirm=0)
                 db.session.add(ord)
+
+                other = Other(admin_approval = 'no', admin_id = '', no_of_video_upload = 0, no_of_video_request = 0, third_party_issue_id = '',third_party_pending_order = '', date = '', start_time = '', end_time = '', live_recording_no = 0, usr_name = username )
+                db.session.add(other)
                 
                 value = Count.query.filter_by(id = 1).first()
                 value.Ordinary = value.Ordinary + 1
@@ -308,6 +311,9 @@ def Register2():
                 Auth = Authority(fname = fname, lname = lname, phone = phone, mail = email, proof = proof, job=job , usr_name = username,confirm=0)
                 db.session.add(Auth)
 
+                other = Other(admin_approval = 'no', admin_id = '', no_of_video_upload = 0, no_of_video_request = 0, third_party_issue_id = '',third_party_pending_order = '', date = '', start_time = '', end_time = '', live_recording_no = 0, usr_name = username )
+                db.session.add(other)
+                
                 value = Count.query.filter_by(id = 1).first()
                 value.Authority = value.Authority + 1
                 db.session.add(value)
@@ -539,3 +545,5 @@ if(__name__ == "__main__"):
 
 
 #insert into Count(id,Ordinary,Authority,Admin,Third_party,Total_Real,Total_upload,Total_request) values (1,0,0,0,0,0,0,0);
+
+
