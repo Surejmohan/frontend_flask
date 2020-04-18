@@ -48,14 +48,14 @@
               </tr>
           
               
-              {% if users == [] %}
+              {% if ordinary == [] %}
               <div class="alert alert-danger">
                 <strong>Info!</strong> There are no registered users 
               </div>
 
               {% endif %}
                  
-                        {% for user in users %}
+                        {% for user in ordinary %}
                         
                       
                        
@@ -96,7 +96,7 @@
         <div class="modal-body" >
 
 
-           <form  method="POST">
+          
 
           
               <div class="form-group">
@@ -105,7 +105,7 @@
                  <label  style= "color:#343a40"  >Name:</label>
                   <input type="hidden"  name="id"  value="{{user.id}}">
 
-                 <input type="text"   style= "color:#343a40" class="form-control" name="name" value="{{user.fname}}" >
+                 <input type="text" readonly   style= "color:#343a40" class="form-control" name="name" value="{{user.fname}}" >
 
 
               </div>
@@ -117,7 +117,7 @@
 
                  <label  style= "color:#343a40">Email:</label>
 
-                 <input type="text" style= "color:#343a40" class="form-control" name="email" value="{{user.mail}}">
+                 <input type="text" readonly style= "color:#343a40" class="form-control" name="email" value="{{user.mail}}">
 
 
               </div>
@@ -128,12 +128,37 @@
 
                  <label  style= "color:#343a40">Phone:</label>
 
-                 <input type="text" style= "color:#343a40" class="form-control" name="phone" value="{{user.phone}}">
+                 <input type="text" readonly style= "color:#343a40" class="form-control" name="phone" value="{{user.phone}}">
 
+                 
 
               </div>
 
-           </form>
+              <div class="form-group">
+
+
+                <label  style= "color:#343a40">IDProof:</label>
+
+               <a type="button" href="/ID_Proof/{{user.usr_name + '_' + user.proof}}" target="_blank" style="margin-right: 5px; background-color:green;" >ID PROOF</a>
+                
+
+             </div>
+
+
+           <form action="/verify" method="POST">
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="result" value="accept">
+              <label class="form-check-label">Accept </label>
+
+            </div>
+
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="result" value="reject">
+              <label class="form-check-label">Reject </label>
+
+            </div>
+            
+          </form>
 
 
         </div>
@@ -174,21 +199,21 @@
         <th>Email</th>
       <th></th>
     </tr>
-              {% if normal == [] %}
+              {% if authority == [] %}
               <div class="alert alert-danger">
                 <strong>Info!</strong> There are no registered users 
               </div>
 
               {% endif %}
        
-              {% for user in normal %}
+              {% for user in authority %}
               
             
              
               <tr>
                <!--- <li class="list-group-item"><a href="Users/{{user.id}}"> -->
                
-                   <td> {{user.uname}}</td> 
+                   <td> {{user.usr_name}}</td> 
                    <td>{{user.mail}}</td>
                   <td><button class="btn btn-success" value="Show Div" onclick="showDiv();" >View</button>  <button class="btn btn-danger">DELETE</button> 
                   </td>

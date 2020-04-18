@@ -7,6 +7,7 @@ from flask_mail import Mail, Message
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired
 from random import seed
 from random import randint
+from flask.helpers import send_from_directory
 # seed random number generator
 seed(1)
 # generate some integers
@@ -393,9 +394,20 @@ def  dashboard():
 @app.route('/Admin/user')
 def user():
 
-    users = Other.query.filter_by(admin_approval = 'no').all()
+    ordinary = (db.session.query(Ordinary).filter(Ordinary.usr_name == Other.usr_name).join(Other,Other.admin_approval == 'no')).all()
+    authority = (db.session.query(Authority).filter(Authority.usr_name == Other.usr_name).join(Other,Other.admin_approval == 'no')).all()
+    
+  
+    
 
-    return render_template('user.html',users = users)
+    return render_template('user.html',ordinary = ordinary,authority = authority)
+
+
+@app.route('/ID_Proof/<path:filename>', methods=['GET', 'POST'])
+def download(filename):
+    return send_from_directory(directory='ID_Proof', filename=filename)
+
+
 
 @app.route('/Admin/third_party', methods=["GET","POST"])
 def third():
