@@ -402,6 +402,11 @@ def user():
 
     return render_template('user.html',ordinary = ordinary,authority = authority)
 
+@app.route('/Admin/process')
+def  process():
+    return render_template('process.html')
+
+    
 
 @app.route('/ID_Proof/<path:filename>', methods=['GET', 'POST'])
 def download(filename):

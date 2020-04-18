@@ -38,6 +38,7 @@
    <div id="main_place">
 
    </div>
+
             <div id=operation1 style = "display:none;">
               <table class="table table-striped table-dark">
                 <tr>
@@ -137,29 +138,33 @@
               <div class="form-group">
 
 
-                <label  style= "color:#343a40">IDProof:</label>
+                <label  style= "color:#343a40"> To check the IDProof, please click the button</label>
 
-               <a type="button" href="/ID_Proof/{{user.usr_name + '_' + user.proof}}" target="_blank" style="margin-right: 5px; background-color:green;" >ID PROOF</a>
+               <a type="button"  class="btn btn-dark"href="/ID_Proof/{{user.usr_name + '_' + user.proof}}" target="_blank" style="margin-right: 5px; background-color:green;" >ID PROOF</a>
                 
 
              </div>
 
+        
+             <form action="/verify" method="POST">
+               <div class="btn-group">
+           
+                 <label class="btn btn-primary  form-check-label">
+                   <input class="form-check-input" type="radio" name="ra" value="accept">Accept
+                 </label>
+                </div>
+               <div class="btn-group">
 
-           <form action="/verify" method="POST">
-            <div class="form-check">
-              <input class="form-check-input" type="radio" name="result" value="accept">
-              <label class="form-check-label">Accept </label>
-
-            </div>
-
-            <div class="form-check">
-              <input class="form-check-input" type="radio" name="result" value="reject">
-              <label class="form-check-label">Reject </label>
-
-            </div>
+                 <label class="btn btn-primary form-check-label">
+                   <input class="form-check-input" type="radio"name="ra" value="reject"> Reject
+                 </label>
+          
+           
+               </div><br><br>
+               <p align="center">
+               <input type="submit" class="btn btn-success"value="Submit"></p>
+        </form>
             
-          </form>
-
 
         </div>
 
