@@ -143,7 +143,7 @@ class Other(db.Model):
     admin_id =  db.Column(db.String(20))
     no_of_video_upload = db.Column(db.Integer)
     no_of_video_request = db.Column(db.Integer)
-    third_party_issue_id = db.Column(db.Integer)
+    third_party_issue_id = db.Column(db.String(20)) 
     third_party_pending_order = db.Column(db.String(10))
     third_party_response = db.Column(db.String(20))  #video available or not
     date= db.Column(db.String(20))
@@ -239,7 +239,9 @@ def Register():
                 city = city,proof = proof, address = address, zip = zip, usr_name = username,confirm=0)
                 db.session.add(ord)
 
-                other = Other(admin_approval = 'no', admin_id = '', no_of_video_upload = 0, no_of_video_request = 0, third_party_issue_id = 			'',third_party_pending_order = '',third_party_response = '', date = '', start_time = '', end_time = '', live_recording_no = 0, 			usr_name = username )
+                other = Other(admin_approval = 'no', admin_id = '', no_of_video_upload = 0, no_of_video_request = 0, 
+                third_party_issue_id = '',third_party_pending_order = '',third_party_response = '', date = '', 
+                start_time = '', end_time = '', live_recording_no = 0,usr_name = username )
                 db.session.add(other)
                 
                 value = Count.query.filter_by(id = 1).first()
@@ -312,7 +314,9 @@ def Register2():
                 Auth = Authority(fname = fname, lname = lname, phone = phone, mail = email, proof = proof, job=job , usr_name = username,confirm=0)
                 db.session.add(Auth)
 
-                other = Other(admin_approval = 'no', admin_id = '', no_of_video_upload = 0, no_of_video_request = 0, third_party_issue_id = 			'',third_party_pending_order = '',third_party_response = '', date = '', start_time = '', end_time = '', live_recording_no = 0, 			usr_name = username )
+                other = Other(admin_approval = 'no', admin_id = '', no_of_video_upload = 0, no_of_video_request = 0, 
+                third_party_issue_id = '',third_party_pending_order = '',third_party_response = '', date = '', 
+                start_time = '', end_time = '', live_recording_no = 0, usr_name = username )
                 db.session.add(other)
                 
                 value = Count.query.filter_by(id = 1).first()
@@ -432,16 +436,14 @@ def verify(username,value):
 
          
          
-
-
-
-
-
-
-
 @app.route('/Admin/process')
 def  process():
-    return render_template('process.html')
+
+    succ = Other.query.filter_by(third_party_pending_order ='yes' ).all()
+    fail = Other.query.filter_by(third_party_pending_order ='reject' ).all()
+    print(succ)
+    print(fail)
+    return render_template('process.html',succ = succ,fail = fail)
 
     
 

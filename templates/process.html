@@ -5,24 +5,7 @@
             <div class="col-md-12">
               <div class="card">
                 <div class="container mt-3" id="Message">
-                  {% with messages = get_flashed_messages(with_categories=True) %}
-                    {% if messages %}
-                      {% for category, message in messages %}
-                        {% if category=='success' %}
-                          <div class="alert alert-success mb-3" role="alert" >
-                            {{message}}
-                          </div>
-                        {% endif %}
-                        
-                        {% if category=='error' %}
-                          <div class="alert alert-danger mb-3" role="alert" >
-                            {{message}}
-                          </div>
-                        {% endif %}
-                      
-                      {% endfor %}
-                    {% endif %}
-                  {% endwith %}
+                 
             </div>
                 <div class="card-header card-header-primary">
                   <h4 class="card-title">Response from Third party </h4>
@@ -48,19 +31,19 @@
               </tr>
           
               
-            {% if user== [] %}
+            {% if succ == [] %}
               <div class="alert alert-danger">
                 <strong>Info!</strong> There are no respose yet !!!
               </div>
               {% endif %}
                         
                       
-                       
+              {% for user in succ %}
                         <tr>
                          
                             
 
-                             <td> first</td> 
+                             <td> {{user.usr_name}}</td> 
                              <td></td>
                              <td>
                               <a href="" class="btn btn-warning btn-xs" data-toggle="modal" data-target="#modaledit{{id}}">Check Video</a>
@@ -138,8 +121,11 @@
                      
                       
               
+{% endfor %}
+        </div>  
+     
 
-        </div>        </table></div>
+      </table></div>
     
 </div></div>
 
@@ -153,7 +139,14 @@
                  <th>Status</th>
                </tr>
            
-               
+               {% if fail== [] %}
+               <div class="alert alert-danger">
+                 <strong>Info!</strong> There are no respose yet !!!
+               </div>
+               {% endif %}
+                         
+                       
+               {% for user in fail %}
              
                          
                        
@@ -162,7 +155,7 @@
                           
                              
  
-                              <td> second</td> 
+                              <td> {{user.usr_name}}</td> 
                               <td></td>
                               <td>
                                 <button class="btn btn-info">Inform User</button>
@@ -236,9 +229,13 @@
  
                       
                        
-               
+ {% endfor %}
  
-         </div>        </table></div>
+         </div>      
+        
+        
+
+        </table></div>
      
  </div></div>
 
