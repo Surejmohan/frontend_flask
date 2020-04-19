@@ -402,6 +402,34 @@ def user():
 
     return render_template('user.html',ordinary = ordinary,authority = authority)
 
+
+
+@app.route('/Admin/user/verify', methods=["GET","POST"])
+def verify():
+
+     if request.method == "GET":
+         username = request.form['ordusername']
+         result = request.form['result']
+         verify = Other.query.filter_by(usr_name = username).first()
+         if result == 'accept':
+            verify.admin_approval = 'accept'
+         elif result == 'reject':
+             verify.admin_approval = 'reject'
+
+         verify.admin_id = 'Surej'
+         db.session.add(verify)
+         db.session.commit()
+         
+         flash('Verified successfully')
+         return render_template('user.html')
+         
+
+
+
+
+
+
+
 @app.route('/Admin/process')
 def  process():
     return render_template('process.html')
@@ -456,7 +484,7 @@ def third():
 
 
             
-            flash('A new Third Party added successfullly','success')
+            flash('A new Third Party added successfully','success')
             return render_template('add_third.html',all = all)
         else:
             flash('Already Registered','error')

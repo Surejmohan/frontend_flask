@@ -5,21 +5,12 @@
             <div class="col-md-12">
               <div class="card">
                 <div class="container mt-3" id="Message">
-                  {% with messages = get_flashed_messages(with_categories=True) %}
+                  {% with messages = get_flashed_messages() %}
                     {% if messages %}
-                      {% for category, message in messages %}
-                        {% if category=='success' %}
+                      {% for message in messages %}
                           <div class="alert alert-success mb-3" role="alert" >
                             {{message}}
                           </div>
-                        {% endif %}
-                        
-                        {% if category=='error' %}
-                          <div class="alert alert-danger mb-3" role="alert" >
-                            {{message}}
-                          </div>
-                        {% endif %}
-                      
                       {% endfor %}
                     {% endif %}
                   {% endwith %}
@@ -67,7 +58,7 @@
                              <td> {{user.usr_name}}</td> 
                              <td>{{user.mail}}</td>
                              <td>
-                              <a href="" class="btn btn-warning btn-xs" data-toggle="modal" data-target="#modaledit{{user.id}}">view</a>
+                              <a href="" class="btn btn-warning btn-xs" data-toggle="modal" data-target="#modaledit_ord{{user.id}}">view</a>
                               <button class="btn btn-success">Send Notification Email</button> 
    
    
@@ -77,8 +68,8 @@
                             
                           
                   <!-- Modal Edit Employee-->
-<div id="modaledit{{user.id}}" class="modal fade"  role="dialog">
-  <div id=co  style="color: black;">
+<div id="modaledit_ord{{user.id}}" class="modal fade"  role="dialog">
+  <div id="coedit_ord{{user.id}}"  style="color: black;">
   <div class="modal-dialog">
 
 
@@ -98,22 +89,16 @@
 
 
           
-
-          
+         
               <div class="form-group">
+               
+
+                 <label  style= "color:#343a40"  >First Name:</label>
+                 <input type="text" readonly   style= "color:#343a40" class="form-control" name="firstname" value="{{user.fname}}" >
 
 
-                 <label  style= "color:#343a40"  >Name:</label>
-                  <input type="hidden"  name="id"  value="{{user.id}}">
-
-                 <input type="text" readonly   style= "color:#343a40" class="form-control" name="name" value="{{user.fname}}" >
-
-
-              </div>
-
-
-
-              <div class="form-group">
+                <label  style= "color:#343a40">Last Name:</label>
+                <input type="text" readonly   style= "color:#343a40" class="form-control" name="lastname" value="{{user.lname}}" >
 
 
                  <label  style= "color:#343a40">Email:</label>
@@ -121,19 +106,17 @@
                  <input type="text" readonly style= "color:#343a40" class="form-control" name="email" value="{{user.mail}}">
 
 
-              </div>
-
-
-              <div class="form-group">
-
-
+              
                  <label  style= "color:#343a40">Phone:</label>
 
                  <input type="text" readonly style= "color:#343a40" class="form-control" name="phone" value="{{user.phone}}">
 
                  
+                <label  style= "color:#343a40">City:</label>
+                <input type="text" readonly   style= "color:#343a40" class="form-control" name="city" value="{{user.city}}" >
 
-              </div>
+
+             </div>
 
               <div class="form-group">
 
@@ -146,24 +129,24 @@
              </div>
 
         
-             <form action="/verify" method="POST">
+            <form id="{{user.usr_name}}" method="GET" action="/Admin/user/verify">
                <div class="btn-group">
-           
+                <input type="hidden" name="username" value="{{user.usr_name}}">
                  <label class="btn btn-primary  form-check-label">
-                   <input class="form-check-input" type="radio" name="ra" value="accept">Accept
+                   <input class="form-check-input" type="radio" name="result" value="accept" checked>Accept
                  </label>
                 </div>
                <div class="btn-group">
 
                  <label class="btn btn-primary form-check-label">
-                   <input class="form-check-input" type="radio"name="ra" value="reject"> Reject
+                   <input class="form-check-input" type="radio"name="result" value="reject"> Reject
                  </label>
           
            
-               </div><br><br>
-               <p align="center">
-               <input type="submit" class="btn btn-success"value="Submit"></p>
-        </form>
+               </div>
+            
+               <button id="{{user.usr_name}}" type="submit" class="btn btn-success">Submit</button>
+            </form>
             
 
         </div>
@@ -220,15 +203,115 @@
                
                    <td> {{user.usr_name}}</td> 
                    <td>{{user.mail}}</td>
-                  <td><button class="btn btn-success" value="Show Div" onclick="showDiv();" >View</button>  <button class="btn btn-danger">DELETE</button> 
+                  <td><button class="btn btn-warning btn-xs"data-toggle="modal" data-target="#modaledit_auth{{user.id}}"" >View</button>  
+                    <button class="btn btn-success">Send Notification Email</button> 
                   </td>
                   </tr>
-         
+                           <!-- Modal Edit Employee-->
+<div id="modaledit_auth{{user.id}}" class="modal fade"  role="dialog">
+  <div id="coedit_ord{{user.id}}"  style="color: black;">
+  <div class="modal-dialog">
+
+
+     <div class="modal-content">
+
+     
+        <div class="modal-header">
+
+
+           <h4 class="modal-title">User Information</h4>
+
+
+        </div>
+
+
+        <div class="modal-body" >
+
+
+          
+
+          
+              <div class="form-group">
+
+
+                 <label  style= "color:#343a40"  >First Name:</label>
+                 <input type="text" readonly   style= "color:#343a40" class="form-control" name="firstname" value="{{user.fname}}" >
+
+
+                <label  style= "color:#343a40">Last Name:</label>
+                <input type="text" readonly   style= "color:#343a40" class="form-control" name="lastname" value="{{user.lname}}" >
+
+
+                 <label  style= "color:#343a40">Email:</label>
+
+                 <input type="text" readonly style= "color:#343a40" class="form-control" name="email" value="{{user.mail}}">
+
+
+              
+                 <label  style= "color:#343a40">Phone:</label>
+
+                 <input type="text" readonly style= "color:#343a40" class="form-control" name="phone" value="{{user.phone}}">
+
+                 
+                <label  style= "color:#343a40">Job:</label>
+                <input type="text" readonly   style= "color:#343a40" class="form-control" name="job" value="{{user.job}}" >
+
+
+             </div>
+
+              <div class="form-group">
+
+
+                <label  style= "color:#343a40"> To check the IDProof, please click the button</label>
+
+               <a type="button"  class="btn btn-dark"href="/ID_Proof/{{user.usr_name + '_' + user.proof}}" target="_blank" style="margin-right: 5px; background-color:green;" >ID PROOF</a>
+                
+
+             </div>
+
+        
+             <form action="/Admin/user/verify" method="POST">
+               <div class="btn-group">
+                <input type="hidden" name="username" value="{{user.usr_name}}">
+                 <label class="btn btn-primary  form-check-label">
+                   <input class="form-check-input" type="radio" name="result" value="accept">Accept
+                 </label>
+                </div>
+               <div class="btn-group">
+
+                 <label class="btn btn-primary form-check-label">
+                   <input class="form-check-input" type="radio"name="result" value="reject"> Reject
+                 </label>
+          
+           
+               </div>
+               <p align="center">
+               <input type="submit" class="btn btn-success"value="Submit"></p>
+        </form>
             
 
-              {% endfor %}
-          
- 
+        </div>
+
+
+        <div class="modal-footer">
+
+
+           <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+
+
+        </div>
+
+
+     </div>
+
+
+  </div>
+
+</div>
+</div>
+                                                  
+
+                        {% endfor %}
 
 </div>        </table></div>
 
