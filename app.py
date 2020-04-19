@@ -407,14 +407,14 @@ def user():
 @app.route('/Admin/user/verify', methods=["GET","POST"])
 def verify():
 
-     if request.method == "GET":
+     if request.method == "POST":
          username = request.form['ordusername']
          result = request.form['result']
          verify = Other.query.filter_by(usr_name = username).first()
          if result == 'accept':
             verify.admin_approval = 'accept'
-         elif result == 'reject':
-             verify.admin_approval = 'reject'
+         if result == 'reject':
+            verify.admin_approval = 'reject'
 
          verify.admin_id = 'Surej'
          db.session.add(verify)

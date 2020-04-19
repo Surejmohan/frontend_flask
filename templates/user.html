@@ -87,6 +87,7 @@
 
         <div class="modal-body" >
 
+        
 
           
          
@@ -128,10 +129,9 @@
 
              </div>
 
-        
-            <form id="{{user.usr_name}}" method="GET" action="/Admin/user/verify">
+             <form  action="/Admin/user/verify" method="POST" id="modal-details" enctype="multipart/form-data">
                <div class="btn-group">
-                <input type="hidden" name="username" value="{{user.usr_name}}">
+                <input type="hidden" name="ordusername" value="{{user.usr_name}}">
                  <label class="btn btn-primary  form-check-label">
                    <input class="form-check-input" type="radio" name="result" value="accept" checked>Accept
                  </label>
@@ -141,20 +141,16 @@
                  <label class="btn btn-primary form-check-label">
                    <input class="form-check-input" type="radio"name="result" value="reject"> Reject
                  </label>
-          
-           
-               </div>
-            
-               <button id="{{user.usr_name}}" type="submit" class="btn btn-success">Submit</button>
-            </form>
+           </div>
+</form>
+  
             
 
         </div>
 
 
         <div class="modal-footer">
-
-
+          <button type="submit" class="btn btn-primary" form="modal-details">Submit</button>
            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
 
 
@@ -227,7 +223,6 @@
 
         <div class="modal-body" >
 
-
           
 
           
@@ -269,33 +264,41 @@
 
              </div>
 
-        
-             <form action="/Admin/user/verify" method="POST">
+             <form action="/Admin/user/verify" method="POST" id="form1">
+            
                <div class="btn-group">
                 <input type="hidden" name="username" value="{{user.usr_name}}">
                  <label class="btn btn-primary  form-check-label">
-                   <input class="form-check-input" type="radio" name="result" value="accept">Accept
+                   <input class="form-check-input" type="radio" name="result" value="accept">
                  </label>
                 </div>
                <div class="btn-group">
 
                  <label class="btn btn-primary form-check-label">
-                   <input class="form-check-input" type="radio"name="result" value="reject"> Reject
+                   <input class="form-check-input" type="radio"name="result" value="reject">
                  </label>
           
            
                </div>
                <p align="center">
-               <input type="submit" class="btn btn-success"value="Submit"></p>
+               <input type="submit" form="form1" name="submit"class="btn btn-success"value="Submit"></p>
         </form>
             
+
+
+
+
+
+
+
+
 
         </div>
 
 
         <div class="modal-footer">
 
-
+           <input type="submit" name="submit"class="btn btn-success"value="Submit"></p>
            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
 
 
