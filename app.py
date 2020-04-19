@@ -391,37 +391,46 @@ def index():
 def  dashboard():
     return render_template('dashboard.html')
 
+
 @app.route('/Admin/user')
 def user():
 
     ordinary = (db.session.query(Ordinary).filter(Ordinary.usr_name == Other.usr_name).join(Other,Other.admin_approval == 'no')).all()
     authority = (db.session.query(Authority).filter(Authority.usr_name == Other.usr_name).join(Other,Other.admin_approval == 'no')).all()
-    
-  
-    
+    return render_template('user.html',ordinary = ordinary,authority = authority)
 
+@app.route('/user')
+def user1():
+
+    ordinary = (db.session.query(Ordinary).filter(Ordinary.usr_name == Other.usr_name).join(Other,Other.admin_approval == 'no')).all()
+    authority = (db.session.query(Authority).filter(Authority.usr_name == Other.usr_name).join(Other,Other.admin_approval == 'no')).all()
     return render_template('user.html',ordinary = ordinary,authority = authority)
 
 
+@app.route('/Admin/user/verify/<path:username>/<path:value>')
+def verify(username,value):
 
-@app.route('/Admin/user/verify', methods=["GET","POST"])
-def verify():
-
-     if request.method == "POST":
-         username = request.form['ordusername']
-         result = request.form['result']
-         verify = Other.query.filter_by(usr_name = username).first()
-         if result == 'accept':
-            verify.admin_approval = 'accept'
-         if result == 'reject':
-            verify.admin_approval = 'reject'
-
-         verify.admin_id = 'Surej'
-         db.session.add(verify)
-         db.session.commit()
+    print(username)
+    result = value
+    print(result)
+    verify = Other.query.filter_by(usr_name = username).first()
+    if result == 'accept':
+        verify.admin_approval = 'accept'
+        verify.admin_id = 'Surej'
+        db.session.add(verify)
+        db.session.commit()
+        flash('Verified successfully')
+        return redirect(url_for('user'))
+    elif result == 'reject':
+        verify.admin_approval = 'reject'
+        verify.admin_id = 'Surej'
+        db.session.add(verify)
+        db.session.commit()
          
-         flash('Verified successfully')
-         return render_template('user.html')
+        flash('Verified successfully')
+        return redirect(url_for('user'))
+
+         
          
 
 
