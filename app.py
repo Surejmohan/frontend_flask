@@ -564,20 +564,9 @@ def remove():
     #result = Admin.execute("SELECT * FROM Admin")
 
     admin = Admin.query.all()
-
-    normal= Admin.query.filter_by(uname='visddhya').all()
-    
-    third = Admin.query.filter_by(uname='vidhya123').all()
-
-    officials = Admin.query.filter_by(uname='Suredfj123').all()
-    officials = Admin.query.filter_by(uname='Suredfj123').all()
-     #admin = Admin.query.all()
-
-    #normal=Ordinary.query.all()
-    
-#third = Third.query.all()
-
-    #officials = Authority.query.all()
+    normal= Ordinary.query.all()
+    third = Third.query.all()
+    officials = Authority.query.all()
     
     
     return render_template('remove.html', admin=admin,normal=normal,third=third, officials=officials)
@@ -585,12 +574,22 @@ def remove():
 
 
 
-@app.route('/delete/<id>/', methods = ['GET', 'POST'])
-def delete(id):
-    my_data = Admin.query.get(id)
-    db.session.delete(my_data)
+@app.route('/delete/<string:usr_name>/', methods = ['GET', 'POST'])
+def delete(usr_name):
+    my_data = db.session.query(Admin).filter(Admin.usr_name == usr_name).first()
+    my_data2=Ordinary.query.filter(usr_name==usr_name).first()
+    my_data3=Third.query.filter(usr_name==usr_name).first()
+    my_data4 = Authority.query.filter(usr_name==usr_name).first()
+    if my_data:
+        db.session.delete(my_data)
+    elif my_data2:
+        db.session.delete(my_data2)
+    elif my_data3:
+        db.session.delete(my_data3)
+    elif my_data4:
+        db.session.delete(my_data4)
     db.session.commit()
-   
+    
     flash("User Deleted Successfully",'success')
     return redirect(url_for('remove'))
 
