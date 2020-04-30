@@ -575,7 +575,9 @@ def remove():
 @app.route('/delete/<string:usr_name>/', methods = ['GET', 'POST'])
 def delete(usr_name):
     user= User.query.filter(User.username == usr_name).first()
-    my_data=user.type
+    print(usr_name)
+    print(user.type)
+
     
     mydata = db.session.query(Admin).filter(Admin.usr_name == usr_name).first()
 
@@ -585,28 +587,32 @@ def delete(usr_name):
 
     my_data4 = Authority.query.filter(usr_name==usr_name).first()
     count = Count.query.filter_by(id = 1).first()
-    db.session.delete(user)
+    
 
 
-    if my_data == "Admin":
+    if user.type == "Admin":
         count.Admin = count.Admin - 1
         db.session.add(count)
         db.session.delete(mydata)
+        db.session.delete(user)
 
-    elif my_data == "Ordinary":
+    elif user.type == "Ordinary":
         count.Ordinary = count.Ordinary - 1
         db.session.add(count)
         db.session.delete(my_data2)
+        db.session.delete(user)
 
-    elif my_data == "Third":
+    elif user.type == "Third_party":
         count.Third_party = count.Third_party - 1
         db.session.add(count)
         db.session.delete(my_data3)
+        db.session.delete(user)
 
-    elif my_data == "Authority":
+    elif user.type == "Authority":
         count.Authority = count.Authority - 1
         db.session.add(count)
         db.session.delete(my_data4)
+        db.session.delete(user)
 
     db.session.commit()
     flash("User Deleted Successfully",'success')
