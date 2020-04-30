@@ -560,8 +560,6 @@ def register():
 
 @app.route('/Admin/remove_user')
 def remove():
-    # Original query not typed due to un availabilty of tables...these are demo
-    #result = Admin.execute("SELECT * FROM Admin")
 
     admin = Admin.query.all()
     normal= Ordinary.query.all()
@@ -576,24 +574,43 @@ def remove():
 
 @app.route('/delete/<string:usr_name>/', methods = ['GET', 'POST'])
 def delete(usr_name):
-    my_data = db.session.query(Admin).filter(Admin.usr_name == usr_name).first()
-    my_data2=Ordinary.query.filter(usr_name==usr_name).first()
-    my_data3=Third.query.filter(usr_name==usr_name).first()
-    my_data4 = Authority.query.filter(usr_name==usr_name).first()
-    if my_data:
-        db.session.delete(my_data)
-    elif my_data2:
-        db.session.delete(my_data2)
-    elif my_data3:
-        db.session.delete(my_data3)
-    elif my_data4:
-        db.session.delete(my_data4)
-    db.session.commit()
+    user= User.query.filter(User.username == usr_name).first()
+    my_data=user.type
     
+    mydata = db.session.query(Admin).filter(Admin.usr_name == usr_name).first()
+
+    my_data2=Ordinary.query.filter(usr_name==usr_name).first()
+
+    my_data3=Third.query.filter(usr_name==usr_name).first()
+
+    my_data4 = Authority.query.filter(usr_name==usr_name).first()
+    count = Count.query.filter_by(id = 1).first()
+    db.session.delete(user)
+
+
+    if my_data == "Admin":
+        count.Admin = count.Admin - 1
+        db.session.add(count)
+        db.session.delete(mydata)
+
+    elif my_data == "Ordinary":
+        count.Ordinary = count.Ordinary - 1
+        db.session.add(count)
+        db.session.delete(my_data2)
+
+    elif my_data == "Third":
+        count.Third_party = count.Third_party - 1
+        db.session.add(count)
+        db.session.delete(my_data3)
+
+    elif my_data == "Authority":
+        count.Authority = count.Authority - 1
+        db.session.add(count)
+        db.session.delete(my_data4)
+
+    db.session.commit()
     flash("User Deleted Successfully",'success')
     return redirect(url_for('remove'))
-
-
 
 
 
