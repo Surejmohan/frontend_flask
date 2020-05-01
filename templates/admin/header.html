@@ -83,25 +83,23 @@ CSS Just for demo purpose, don't include it in your project
       </div>
     <div class="main-panel">
       <!-- Navbar -->
-      <nav class="navbar navbar-expand-lg navbar-transparent navbar-absolute fixed-top " id="navigation-example">
-        <div class="container-fluid">
-          <div class="navbar-wrapper">
-            <a class="navbar-brand" href="javascript:void(0)">Dashboard</a>
-          </div>
-          
-          <div class="collapse navbar-collapse justify-content-end">
-            
-            <ul class="navbar-nav">
-              <li class="nav-item">
-                <a class="nav-link" href="javascript:void(0)">
-                  <i class="material-icons">person</i>
-                  <p class="d-lg-none d-md-block">
-                    Account
-                  </p>
-                </a>
+      <nav id="nav-menu-container">
+        <ul class="nav-menu pull-right" style="margin: 30px;">
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="caret">USERNAME </span></a>
+            <ul class="dropdown-menu">
+              <li><a href="#editprofile" onclick="Updateprofile()">Edit Profile</a>
+              </li>
+              <li><a href="#updatediv" onclick="UpdatePassword()"> Change Password</a>
+              </li>
+              <li><a href="#updateusername" onclick="Updateusername()">Change Username</a>
+              </li>
+              <li><a href="/logout">Logout</a>
+              </li>
+              <li><a href="/delete">Delete Account</a>
               </li>
             </ul>
-          </div>
-        </div>
+          </li>
+        </ul>
       </nav>
       <!-- End Navbar -->

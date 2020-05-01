@@ -362,13 +362,13 @@ def login():
         if login:
             
             if login.type == 'Admin':
-                return render_template('dashboard.html')
+                return redirect(url_for('admindashboard'))
 
-            elif login.type == 'Ordinary':
-                return render_template('current.html')
+            elif login.type == 'Ordinary' or login.type == 'Authority':
+                return redirect(url_for('current'))
 
             elif login.type == 'Third_party':
-                return render_template('thirdparty.html')
+                return redirect(url_for('thirddashboard'))
             else: 
                 return "ll"
         else:
@@ -398,11 +398,12 @@ def index():
 #admin page
 
 @app.route('/Admin')
-def  dashboard():
+def  admindashboard():
     if "user" in session:
         user = session["user"]
         return render_template('dashboard.html',user=user)
     else:
+        flash('Not Allowed Please Register','error')
         return render_template('index.html',scroll='relogin')
     
 
