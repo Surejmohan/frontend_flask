@@ -8,11 +8,10 @@ from itsdangerous import URLSafeTimedSerializer, SignatureExpired
 from random import seed
 from random import randint
 from flask.helpers import send_from_directory
+from datetime import timedelta
 # seed random number generator
 seed(1)
 # generate some integers
-
-
 
 IDPROOF_FOLDER = './ID_Proof'
 ALLOWEDID_EXTENSIONS = {'pdf', 'png', 'jpg', 'jpeg'}
@@ -36,6 +35,8 @@ app.config['MAIL_PASSWORD'] = 'Google2020'
 app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = True
 mail = Mail(app)
+
+app.secret_key = "hello"
 
 
 
@@ -351,7 +352,9 @@ def Register2():
 @app.route("/login",methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
+        session.permanent = True       
         uname = request.form['uname']
+        session["user"] = uname
         passw = request.form['psw']
         
         login = User.query.filter_by(username=uname, password=passw).first()
@@ -370,10 +373,13 @@ def login():
                 return "ll"
         else:
             flash('User is Not Registerd','error')
-            return render_template('index.html',scroll='re')
+            return render_template('index.html',scroll='relogin')
 
             
-
+@app.route("/logout")
+def logout():
+    session.pop("user", None)
+    return render_template('index.html',scroll='relogin')
 
 
 @app.route('/')
@@ -393,15 +399,24 @@ def index():
 
 @app.route('/Admin')
 def  dashboard():
-    return render_template('dashboard.html')
+    if "user" in session:
+        user = session["user"]
+        return render_template('dashboard.html',user=user)
+    else:
+        return render_template('index.html',scroll='relogin')
+    
 
 
 @app.route('/Admin/user')
 def user():
+    if "user" in session:
+        user = session["user"]
+        ordinary = (db.session.query(Ordinary).filter(Ordinary.usr_name == Other.usr_name).join(Other,Other.admin_approval == 'no')).all()
+        authority = (db.session.query(Authority).filter(Authority.usr_name == Other.usr_name).join(Other,Other.admin_approval == 'no')).all()
+        return render_template('user.html',ordinary = ordinary,authority = authority)
+    else:
+        return render_template('index.html',scroll='relogin')
 
-    ordinary = (db.session.query(Ordinary).filter(Ordinary.usr_name == Other.usr_name).join(Other,Other.admin_approval == 'no')).all()
-    authority = (db.session.query(Authority).filter(Authority.usr_name == Other.usr_name).join(Other,Other.admin_approval == 'no')).all()
-    return render_template('user.html',ordinary = ordinary,authority = authority)
 
 @app.route('/user')
 def user1():
@@ -413,98 +428,113 @@ def user1():
 
 @app.route('/Admin/user/verify/<path:username>/<path:value>')
 def verify(username,value):
-
-    print(username)
-    result = value
-    print(result)
-    verify = Other.query.filter_by(usr_name = username).first()
-    if result == 'accept':
-        verify.admin_approval = 'accept'
-        verify.admin_id = 'Surej'
-        db.session.add(verify)
-        db.session.commit()
-        flash('Verified successfully')
-        return redirect(url_for('user'))
-    elif result == 'reject':
-        verify.admin_approval = 'reject'
-        verify.admin_id = 'Surej'
-        db.session.add(verify)
-        db.session.commit()
+    if "user" in session:
+        user = session["user"]
+        print(username)
+        result = value
+        print(result)
+        verify = Other.query.filter_by(usr_name = username).first()
+        if result == 'accept':
+            verify.admin_approval = 'accept'
+            verify.admin_id = 'Surej'
+            db.session.add(verify)
+            db.session.commit()
+            flash('Verified successfully')
+            return redirect(url_for('user'))
+        elif result == 'reject':
+            verify.admin_approval = 'reject'
+            verify.admin_id = 'Surej'
+            db.session.add(verify)
+            db.session.commit()
          
-        flash('Verified successfully')
-        return redirect(url_for('user'))
+            flash('Verified successfully')
+            return redirect(url_for('user'))
+    else:
+        return render_template('index.html',scroll='relogin')
+
 
          
          
 @app.route('/Admin/process')
 def  process():
-
-    succ = Other.query.filter_by(third_party_pending_order ='yes' ).all()
-    fail = Other.query.filter_by(third_party_pending_order ='reject' ).all()
-    print(succ)
-    print(fail)
-    return render_template('process.html',succ = succ,fail = fail)
+    if "user" in session:
+        user = session["user"]
+        succ = Other.query.filter_by(third_party_pending_order ='yes' ).all()
+        fail = Other.query.filter_by(third_party_pending_order ='reject' ).all()
+        print(succ)
+        print(fail)
+        return render_template('process.html',succ = succ,fail = fail)
+    else:
+        return render_template('index.html',scroll='relogin')
 
     
 
 @app.route('/ID_Proof/<path:filename>', methods=['GET', 'POST'])
 def download(filename):
-    return send_from_directory(directory='ID_Proof', filename=filename)
+    if "user" in session:
+        user = session["user"]
+        return send_from_directory(directory='ID_Proof', filename=filename)
+    else:
+        return render_template('index.html',scroll='relogin')
 
 
 
 @app.route('/Admin/third_party', methods=["GET","POST"])
 def third():
-     all = db.session.query(Third.dept.distinct()).all()
-     len1 = len(all)
+    if "user" in session:
+        user = session["user"]
+        all = db.session.query(Third.dept.distinct()).all()
+        len1 = len(all)
      
      
-     if request.method == "POST":
-        dept = request.form['firstList']
-        new = request.form['secondList']
-        name = request.form['thirdList']
-        phone = request.form['phone']
-        mail1 = request.form['fourthList']
-        if dept == 'Other':
-            dept = new
-        exists = Third.query.filter_by(mail = mail1).first()
+        if request.method == "POST":
+            dept = request.form['firstList']
+            new = request.form['secondList']
+            name = request.form['thirdList']
+            phone = request.form['phone']
+            mail1 = request.form['fourthList']
+            if dept == 'Other':
+                dept = new
+            exists = Third.query.filter_by(mail = mail1).first()
 
-        if not exists:
+            if not exists:
             
-            v1 = randint(0, 1000)
-            v2 = randint(0, 1000)
-            value = Count.query.filter_by(id = 1).first()
-            uname = dept + '_' + str(value.Third_party+1)
-            third_party_id = uname
-            psw=str(v1)+name+str(v2)
+                v1 = randint(0, 1000)
+                v2 = randint(0, 1000)
+                value = Count.query.filter_by(id = 1).first()
+                uname = dept + '_' + str(value.Third_party+1)
+                third_party_id = uname
+                psw=str(v1)+name+str(v2)
             
 
-            user = User(username=uname,password=psw,type='Third_party')
-            register = Third(usr_name = uname, dept=dept, name=name, mail = mail1, phone=phone, third_party_id = third_party_id)
-            count = Count.query.filter_by(id = 1).first()
-            count.Third_party = count.Third_party + 1
-            db.session.add(user)
-            db.session.add(register)
-            db.session.add(count)
-            db.session.commit()
+                user = User(username=uname,password=psw,type='Third_party')
+                register = Third(usr_name = uname, dept=dept, name=name, mail = mail1, phone=phone, third_party_id = third_party_id)
+                count = Count.query.filter_by(id = 1).first()
+                count.Third_party = count.Third_party + 1
+                db.session.add(user)
+                db.session.add(register)
+                db.session.add(count)
+                db.session.commit()
             
-            msg = Message('Welcome to Pinpoint Family', sender = 'pinpoint.four.2020@gmail.com', recipients = [mail1])
-            msg.html = '<h5>Hi,</h5><h3>You are addded as Third Party at PINPOINT.<br>Please login PINPOINT using following details</h3><h5> Your Username : {} <br> Password : {}<br><br> Happy to connect with u <BR> Thank you<h5>'.format(uname,psw)
+                msg = Message('Welcome to Pinpoint Family', sender = 'pinpoint.four.2020@gmail.com', recipients = [mail1])
+                msg.html = '<h5>Hi,</h5><h3>You are addded as Third Party at PINPOINT.<br>Please login PINPOINT using following details</h3><h5> Your Username : {} <br> Password : {}<br><br> Happy to connect with u <BR> Thank you<h5>'.format(uname,psw)
 
-            mail.send(msg)
+                mail.send(msg)
 
 
             
-            flash('A new Third Party added successfully','success')
+                flash('A new Third Party added successfully','success')
+                return render_template('add_third.html',all = all)
+            else:
+                flash('Already Registered','error')
+
+
+        if all != None:
             return render_template('add_third.html',all = all)
         else:
-            flash('Already Registered','error')
-
-
-     if all != None:
-        return render_template('add_third.html',all = all)
-     else:
-         return render_template('add_third.html')
+            return render_template('add_third.html')
+    else:
+        return render_template('index.html',scroll='relogin')
 
 
 
@@ -516,108 +546,117 @@ def third():
 @app.route('/Admin/add_admin', methods=["GET","POST"])
 
 def register():
-    if request.method == "POST":
-        uname = request.form['uname']
-        email = request.form['mail']
-        fname = request.form['fname']
-        lname = request.form['lname']
-        phone = request.form['phone']
+    if "user" in session:
+        user = session["user"]       
+        if request.method == "POST":
+            uname = request.form['uname']
+            email = request.form['mail']
+            fname = request.form['fname']
+            lname = request.form['lname']
+            phone = request.form['phone']
 
-        exists = User.query.filter_by(username = uname).first()
+            exists = User.query.filter_by(username = uname).first()
 
-        if not exists:
+            if not exists:
+                
+                v1 = randint(0, 1000)
+                v2 = randint(100, 999)
+                psw=str(v1)+uname+str(v2)
+                value = Count.query.filter_by(id = 1).first()
+                admin_id = "Admin_" + str(value.Admin+1)
+
+                user = User(username=uname,password=psw,type='Admin')
+                register = Admin(usr_name = uname,fname=fname,lname=lname,mail = email, phone=phone, admin_id = admin_id)
+                count = Count.query.filter_by(id = 1).first()
+                count.Admin = count.Admin + 1
+                db.session.add(user)
+                db.session.add(register)
+                db.session.add(count)
+                db.session.commit()
+                
+                
+                msg = Message('Welcome to Pinpoint Family', sender = 'pinpoint.four.2020@gmail.com', recipients = [email])
+                msg.html = '<h5>Hi {}&emsp;{},</h5><h3>You are addded as admin at PINPOINT.<br>Please login PINPOINT using following details</h3><h5> Your Username : {} <br> Password : {}<br><br> Happy to connect with u <BR> Thank you<h5>'.format(fname,lname,uname,psw)
+
+                mail.send(msg)
+
+                
+                flash('A new admin added successfullly','success')
+                return render_template('add_admin.html')
+            else:
+                flash('Username already taken,try somethig else','error')
+
             
-            v1 = randint(0, 1000)
-            v2 = randint(100, 999)
-            psw=str(v1)+uname+str(v2)
-            value = Count.query.filter_by(id = 1).first()
-            admin_id = "Admin_" + str(value.Admin+1)
-
-            user = User(username=uname,password=psw,type='Admin')
-            register = Admin(usr_name = uname,fname=fname,lname=lname,mail = email, phone=phone, admin_id = admin_id)
-            count = Count.query.filter_by(id = 1).first()
-            count.Admin = count.Admin + 1
-            db.session.add(user)
-            db.session.add(register)
-            db.session.add(count)
-            db.session.commit()
-            
-            
-            msg = Message('Welcome to Pinpoint Family', sender = 'pinpoint.four.2020@gmail.com', recipients = [email])
-            msg.html = '<h5>Hi {}&emsp;{},</h5><h3>You are addded as admin at PINPOINT.<br>Please login PINPOINT using following details</h3><h5> Your Username : {} <br> Password : {}<br><br> Happy to connect with u <BR> Thank you<h5>'.format(fname,lname,uname,psw)
-
-            mail.send(msg)
-
-            
-            flash('A new admin added successfullly','success')
-            return render_template('add_admin.html')
-        else:
-            flash('Username already taken,try somethig else','error')
-
-        
-    return render_template('add_admin.html')
-    
+        return render_template('add_admin.html')
+    else:
+        return render_template('index.html',scroll='relogin')
 
 @app.route('/Admin/remove_user')
 def remove():
+    if "user" in session:
+        user = session["user"]
 
-    admin = Admin.query.all()
-    normal= Ordinary.query.all()
-    third = Third.query.all()
-    officials = Authority.query.all()
-    
-    
-    return render_template('remove.html', admin=admin,normal=normal,third=third, officials=officials)
- 
+        admin = Admin.query.all()
+        normal= Ordinary.query.all()
+        third = Third.query.all()
+        officials = Authority.query.all()
+        
+        
+        return render_template('remove.html', admin=admin,normal=normal,third=third, officials=officials)
+    else:
+        return render_template('index.html',scroll='relogin')
 
 
 
 @app.route('/delete/<string:usr_name>/', methods = ['GET', 'POST'])
 def delete(usr_name):
-    user= User.query.filter(User.username == usr_name).first()
-    print(usr_name)
-    print(user.type)
+    if "user" in session:
+        user = session["user"]
+        user= User.query.filter(User.username == usr_name).first()
+        print(usr_name)
+        print(user.type)
 
-    
-    mydata = db.session.query(Admin).filter(Admin.usr_name == usr_name).first()
+        
+        mydata = db.session.query(Admin).filter(Admin.usr_name == usr_name).first()
 
-    my_data2=Ordinary.query.filter(usr_name==usr_name).first()
+        my_data2=Ordinary.query.filter(usr_name==usr_name).first()
 
-    my_data3=Third.query.filter(usr_name==usr_name).first()
+        my_data3=Third.query.filter(usr_name==usr_name).first()
 
-    my_data4 = Authority.query.filter(usr_name==usr_name).first()
-    count = Count.query.filter_by(id = 1).first()
-    
+        my_data4 = Authority.query.filter(usr_name==usr_name).first()
+        count = Count.query.filter_by(id = 1).first()
+        
 
 
-    if user.type == "Admin":
-        count.Admin = count.Admin - 1
-        db.session.add(count)
-        db.session.delete(mydata)
-        db.session.delete(user)
+        if user.type == "Admin":
+            count.Admin = count.Admin - 1
+            db.session.add(count)
+            db.session.delete(mydata)
+            db.session.delete(user)
 
-    elif user.type == "Ordinary":
-        count.Ordinary = count.Ordinary - 1
-        db.session.add(count)
-        db.session.delete(my_data2)
-        db.session.delete(user)
+        elif user.type == "Ordinary":
+            count.Ordinary = count.Ordinary - 1
+            db.session.add(count)
+            db.session.delete(my_data2)
+            db.session.delete(user)
 
-    elif user.type == "Third_party":
-        count.Third_party = count.Third_party - 1
-        db.session.add(count)
-        db.session.delete(my_data3)
-        db.session.delete(user)
+        elif user.type == "Third_party":
+            count.Third_party = count.Third_party - 1
+            db.session.add(count)
+            db.session.delete(my_data3)
+            db.session.delete(user)
 
-    elif user.type == "Authority":
-        count.Authority = count.Authority - 1
-        db.session.add(count)
-        db.session.delete(my_data4)
-        db.session.delete(user)
+        elif user.type == "Authority":
+            count.Authority = count.Authority - 1
+            db.session.add(count)
+            db.session.delete(my_data4)
+            db.session.delete(user)
 
-    db.session.commit()
-    flash("User Deleted Successfully",'success')
-    return redirect(url_for('remove'))
-
+        db.session.commit()
+        flash("User Deleted Successfully",'success')
+        return redirect(url_for('remove'))
+    else:
+        return render_template('index.html',scroll='relogin')
 
 
 
