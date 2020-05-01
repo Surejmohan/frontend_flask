@@ -354,7 +354,6 @@ def login():
     if request.method == 'POST':
         session.permanent = True       
         uname = request.form['uname']
-        session["user"] = uname
         passw = request.form['psw']
         
         login = User.query.filter_by(username=uname, password=passw).first()
@@ -362,12 +361,17 @@ def login():
         if login:
             
             if login.type == 'Admin':
+                session["admin"] = uname
+
                 return redirect(url_for('admindashboard'))
 
             elif login.type == 'Ordinary' or login.type == 'Authority':
+                session["user"] = uname
+
                 return redirect(url_for('current'))
 
             elif login.type == 'Third_party':
+                session["third"] = uname
                 return redirect(url_for('thirddashboard'))
             else: 
                 return "ll"
@@ -378,7 +382,8 @@ def login():
             
 @app.route("/logout")
 def logout():
-    session.pop("user", None)
+    for key in session.keys():
+        session.pop(key)
     return render_template('index.html',scroll='relogin')
 
 
@@ -399,8 +404,8 @@ def index():
 
 @app.route('/Admin')
 def  admindashboard():
-    if "user" in session:
-        user = session["user"]
+    if "admin" in session:
+        user = session["admin"]
         return render_template('dashboard.html',user=user)
     else:
         flash('Not Allowed Please Register','error')
@@ -410,27 +415,30 @@ def  admindashboard():
 
 @app.route('/Admin/user')
 def user():
-    if "user" in session:
-        user = session["user"]
+    if "admin" in session:
+        user = session["admin"]
         ordinary = (db.session.query(Ordinary).filter(Ordinary.usr_name == Other.usr_name).join(Other,Other.admin_approval == 'no')).all()
         authority = (db.session.query(Authority).filter(Authority.usr_name == Other.usr_name).join(Other,Other.admin_approval == 'no')).all()
-        return render_template('user.html',ordinary = ordinary,authority = authority)
+        return render_template('user.html',ordinary = ordinary,authority = authority,user=user)
     else:
         return render_template('index.html',scroll='relogin')
 
 
 @app.route('/user')
 def user1():
-
-    ordinary = (db.session.query(Ordinary).filter(Ordinary.usr_name == Other.usr_name).join(Other,Other.admin_approval == 'no')).all()
-    authority = (db.session.query(Authority).filter(Authority.usr_name == Other.usr_name).join(Other,Other.admin_approval == 'no')).all()
-    return render_template('user.html',ordinary = ordinary,authority = authority)
+    if "admin" in session:
+        user = session["admin"]
+        ordinary = (db.session.query(Ordinary).filter(Ordinary.usr_name == Other.usr_name).join(Other,Other.admin_approval == 'no')).all()
+        authority = (db.session.query(Authority).filter(Authority.usr_name == Other.usr_name).join(Other,Other.admin_approval == 'no')).all()
+        return render_template('user.html',ordinary = ordinary,authority = authority,user=user)
+    else:
+        render_template('index.html',scroll='relogin')
 
 
 @app.route('/Admin/user/verify/<path:username>/<path:value>')
 def verify(username,value):
-    if "user" in session:
-        user = session["user"]
+    if "admin" in session:
+        user = session["admin"]
         print(username)
         result = value
         print(result)
@@ -441,7 +449,7 @@ def verify(username,value):
             db.session.add(verify)
             db.session.commit()
             flash('Verified successfully')
-            return redirect(url_for('user'))
+            return redirect(url_for('user',user=user))
         elif result == 'reject':
             verify.admin_approval = 'reject'
             verify.admin_id = 'Surej'
@@ -449,7 +457,7 @@ def verify(username,value):
             db.session.commit()
          
             flash('Verified successfully')
-            return redirect(url_for('user'))
+            return redirect(url_for('user',user=user))
     else:
         return render_template('index.html',scroll='relogin')
 
@@ -458,13 +466,13 @@ def verify(username,value):
          
 @app.route('/Admin/process')
 def  process():
-    if "user" in session:
-        user = session["user"]
+    if "admin" in session:
+        user = session["admin"]
         succ = Other.query.filter_by(third_party_pending_order ='yes' ).all()
         fail = Other.query.filter_by(third_party_pending_order ='reject' ).all()
         print(succ)
         print(fail)
-        return render_template('process.html',succ = succ,fail = fail)
+        return render_template('process.html',succ = succ,fail = fail ,user=user)
     else:
         return render_template('index.html',scroll='relogin')
 
@@ -473,8 +481,8 @@ def  process():
 @app.route('/ID_Proof/<path:filename>', methods=['GET', 'POST'])
 def download(filename):
     if "user" in session:
-        user = session["user"]
-        return send_from_directory(directory='ID_Proof', filename=filename)
+        user = session["admin"]
+        return send_from_directory(directory='ID_Proof', filename=filename,user=user)
     else:
         return render_template('index.html',scroll='relogin')
 
@@ -482,8 +490,8 @@ def download(filename):
 
 @app.route('/Admin/third_party', methods=["GET","POST"])
 def third():
-    if "user" in session:
-        user = session["user"]
+    if "admin" in session:
+        user = session["admin"]
         all = db.session.query(Third.dept.distinct()).all()
         len1 = len(all)
      
@@ -525,15 +533,15 @@ def third():
 
             
                 flash('A new Third Party added successfully','success')
-                return render_template('add_third.html',all = all)
+                return render_template('add_third.html',all = all, user=user)
             else:
                 flash('Already Registered','error')
 
 
         if all != None:
-            return render_template('add_third.html',all = all)
+            return render_template('add_third.html',all = all,user=user)
         else:
-            return render_template('add_third.html')
+            return render_template('add_third.html',user=user)
     else:
         return render_template('index.html',scroll='relogin')
 
@@ -547,8 +555,8 @@ def third():
 @app.route('/Admin/add_admin', methods=["GET","POST"])
 
 def register():
-    if "user" in session:
-        user = session["user"]       
+    if "admin" in session:
+        user = session["admin"]       
         if request.method == "POST":
             uname = request.form['uname']
             email = request.form['mail']
@@ -583,19 +591,19 @@ def register():
 
                 
                 flash('A new admin added successfullly','success')
-                return render_template('add_admin.html')
+                return render_template('add_admin.html',user=user)
             else:
                 flash('Username already taken,try somethig else','error')
 
             
-        return render_template('add_admin.html')
+        return render_template('add_admin.html',user=user)
     else:
         return render_template('index.html',scroll='relogin')
 
 @app.route('/Admin/remove_user')
 def remove():
-    if "user" in session:
-        user = session["user"]
+    if "admin" in session:
+        user = session["admin"]
 
         admin = Admin.query.all()
         normal= Ordinary.query.all()
@@ -603,7 +611,7 @@ def remove():
         officials = Authority.query.all()
         
         
-        return render_template('remove.html', admin=admin,normal=normal,third=third, officials=officials)
+        return render_template('remove.html', admin=admin,normal=normal,third=third, officials=officials,user=user)
     else:
         return render_template('index.html',scroll='relogin')
 
@@ -611,8 +619,8 @@ def remove():
 
 @app.route('/delete/<string:usr_name>/', methods = ['GET', 'POST'])
 def delete(usr_name):
-    if "user" in session:
-        user = session["user"]
+    if "admin" in session:
+        user = session["admin"]
         user= User.query.filter(User.username == usr_name).first()
         print(usr_name)
         print(user.type)
@@ -655,7 +663,7 @@ def delete(usr_name):
 
         db.session.commit()
         flash("User Deleted Successfully",'success')
-        return redirect(url_for('remove'))
+        return redirect(url_for('remove',user=user))
     else:
         return render_template('index.html',scroll='relogin')
 

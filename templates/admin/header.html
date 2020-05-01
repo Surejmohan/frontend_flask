@@ -3,7 +3,9 @@
 
 <head>
   <meta charset="utf-8" />
-  
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
   <link rel="apple-touch-icon" sizes="76x76" href="{{url_for('static', filename='img/apple-icon.png')}}">
   <link rel="icon" type="image/png" href="{{url_for('static', filename='img/favicon.png')}}">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
@@ -22,6 +24,7 @@
 CSS Just for demo purpose, don't include it in your project 
   <link href="../static/demo/demo.css" rel="stylesheet" /> -->
   <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='demo/demo.css') }}">
+
 </head>
 
 <body class="dark-edition">
@@ -83,23 +86,26 @@ CSS Just for demo purpose, don't include it in your project
       </div>
     <div class="main-panel">
       <!-- Navbar -->
-      <nav id="nav-menu-container">
-        <ul class="nav-menu pull-right" style="margin: 30px;">
-          <li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="caret">USERNAME </span></a>
-            <ul class="dropdown-menu">
-              <li><a href="#editprofile" onclick="Updateprofile()">Edit Profile</a>
-              </li>
-              <li><a href="#updatediv" onclick="UpdatePassword()"> Change Password</a>
-              </li>
-              <li><a href="#updateusername" onclick="Updateusername()">Change Username</a>
-              </li>
-              <li><a href="/logout">Logout</a>
-              </li>
-              <li><a href="/delete">Delete Account</a>
-              </li>
-            </ul>
-          </li>
-        </ul>
-      </nav>
+      <div class="bs-example">
+          <div class="nav-menu pull-right">
+
+          <div class="nav-item dropdown" >
+            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
+              <span class="caret">Hi,&nbsp;{{user}} </span></a>
+              
+            <div class="dropdown-menu" >
+                <a class="dropdown-item" href="#editprofile" onclick="Updateprofile()">Edit Profile</a>
+                <a  class="dropdown-item"href="#updatediv" onclick="UpdatePassword()"> Change Password</a>
+                <a  class="dropdown-item"href="#updateusername" onclick="Updateusername()">Change Username</a>
+                <a href="/logout" class="dropdown-item" >Logout</a>
+                <a href="/delete" class="dropdown-item">Delete Account</a>
+              <!--  <div class="dropdown-divider" ></div>
+                <a href="#"class="dropdown-item">Trash</a>
+            </div>  -->
+      
+          
+          </div>
+        </div>
+      </div>
+ </div>
       <!-- End Navbar -->
